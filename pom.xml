@@ -3,12 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.isi.bmkeg</groupId>
 	<artifactId>lapdftext</artifactId>
-	<version>1.7.3-SNAPSHOT</version>
+	<version>1.7.3</version>
+	<name>LA-PDFText</name>
+	<description>A text extraction tool based on blocking of PDF files.</description>
 
 	<parent>
 		<groupId>edu.isi.bmkeg</groupId>
 		<artifactId>bmkeg-parent</artifactId>
-		<version>1.1.4-SNAPSHOT</version>
+		<version>1.1.4</version>
 		<relativePath>../bmkeg-parent</relativePath>
 	</parent>
 
@@ -79,6 +81,19 @@
 								<source>${project.build.directory}/generated-sources/jcasgen</source>
 							</sources>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -159,6 +174,33 @@
 		</pluginManagement>
 	</build>
 
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<url>https://github.com/BMKEG/lapdftext</url>
+		<connection>https://github.com/BMKEG/lapdftext</connection>
+	</scm>
+
+	<developers>
+		<developer>
+			<id>GullyAPCBurns</id>
+			<name>Gully APC Burns</name>
+			<email>GullyBurns@gmail.com</email>
+		</developer>
+		<developer>
+			<id>marcelotallis</id>
+			<name>Marcelo Tallis</name>
+			<email>marcelotallis@gmail.cm</email>
+		</developer>
+	</developers>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.uima</groupId>
@@ -218,9 +260,9 @@
 			<version>lgpl</version>
 		</dependency>
 		<dependency>
-			<groupId>com.infomatiq</groupId>
+			<groupId>net.sourceforge.jsi</groupId>
 			<artifactId>jsi</artifactId>
-			<version>1.0b5-modified</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>trove</groupId>

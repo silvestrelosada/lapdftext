@@ -5,13 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.drools.lang.DRLParser.in_key_return;
 
 import edu.isi.bmkeg.lapdf.extraction.exceptions.InvalidPopularSpaceValueException;
 import edu.isi.bmkeg.lapdf.model.RTree.RTPageBlock;
