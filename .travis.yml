@@ -2,4 +2,5 @@ language: java
 jdk:
   - openjdk6
 before_install:
-  - git clone https://github.com/BMKEG/bmkeg-parent ..
+  - rm -rf ../bmkeg-parent/
+  - git clone https://github.com/BMKEG/bmkeg-parent ../bmkeg-parent
