@@ -71,18 +71,32 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 
 		String o1Alignment = ((Block) o1).readLeftRightMidLine();
 		String o2Alignment = ((Block) o2).readLeftRightMidLine();
-		int pageNumber = ((PageBlock) ((Block) o1).getContainer())
-				.getPageNumber();
+
+		int pageNumber = -1;
+		Block b = ((Block) o1).getContainer();
+		PageBlock pgB = null;
+		
+		if( b instanceof PageBlock ) {
+			pgB = (PageBlock) b;
+			pageNumber = pgB.getPageNumber();
+		} else {
+			ChunkBlock cb = (ChunkBlock) b;
+			pgB = cb.getPage();
+			pageNumber = pgB.getPageNumber();			
+		}
+		
 		int o1y1 = o1.getY1();
 		int o2y1 = o2.getY1();
-		int pageHeight = ((PageBlock) ((Block) o1).getContainer())
-				.getPageBoxHeight();
+		int pageHeight = pgB.getPageBoxHeight();
 
 		if (pageNumber == 1 && Math.abs(o1y1 - o2y1) >= .5 * pageHeight) {
 			
 			return mixedOrdering(o1, o2);
 		
-		} else if (executeHeaderFooterCheck((ChunkBlock) o1, (ChunkBlock) o2)) {
+		} 
+		
+		if (o1 instanceof ChunkBlock && 
+				executeHeaderFooterCheck((ChunkBlock) o1, (ChunkBlock) o2)) {
 		
 			return mixedOrdering(o1, o2);
 		
