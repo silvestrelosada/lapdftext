@@ -25,6 +25,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import org.apache.log4j.Logger;
+
+import edu.isi.bmkeg.lapdf.classification.ruleBased.RuleBasedChunkClassifier;
 import edu.isi.bmkeg.lapdf.extraction.exceptions.AccessException;
 import edu.isi.bmkeg.lapdf.extraction.exceptions.EmptyPDFException;
 import edu.isi.bmkeg.lapdf.extraction.exceptions.EncryptionException;
@@ -34,6 +37,8 @@ import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
 
 public class JPedalExtractor implements Extractor {
 
+	private static Logger logger = Logger.getLogger(JPedalExtractor.class);
+	
 	Set<WordBlock> wordListPerPage = null;
 	PdfDecoder PDFDecoder = null;
 	int currentPage = 1;
@@ -206,8 +211,7 @@ public class JPedalExtractor implements Extractor {
 					wy2, 1, font, style, currentWord);
 
 			if( font == null || style == null ) {
-				System.err.println(
-						"Minor font error for word on pg." + this.currentPage + 
+				logger.debug("Minor font error for word on pg." + this.currentPage + 
 						" in '" + this.currentFile.getName() + "', info:" + 
 						wordBlock.toString() + "\n");
 			}
