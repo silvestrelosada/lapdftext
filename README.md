@@ -1,7 +1,7 @@
 lapdftext
 =========
 
-Instructions on how to download, install and run LA-PDFText version 1.7.2
+Instructions on how to download, install and run LA-PDFText version 1.7.3
 
 Prerequisites:
 
