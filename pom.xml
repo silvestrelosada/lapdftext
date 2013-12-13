@@ -169,10 +169,7 @@
 		</license>
 	</licenses>
 
-	<scm>
-		<url>https://github.com/BMKEG/lapdftext</url>
-		<connection>https://github.com/BMKEG/lapdftext</connection>
-	</scm>
+	<scm/>
 
 	<developers>
 		<developer>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="5.1.6" transformSequenceNumber="4">
-  <directoryPresets config="/Users/burns/git/lapdftextProject/lapdftext/src/main/installer" />
+<install4j version="5.1.7" transformSequenceNumber="4">
+  <directoryPresets config="/Users/burns/git/lapdftextProject/lapdftext/target/lapdftext-1.7.3-SNAPSHOT-jar-with-dependencies.jar" />
   <application name="Layout-Aware PDF Text Extraction" distributionSourceDir="" applicationId="7606-4659-7483-6371" mediaDir="/Users/burns/git/lapdftextProject/lapdftext/target/" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="lapdftext" publisher="Biomedical Knowledge Engineering Group" publisherWeb="http://bmkeg.isi.edu/" version="1.7.3-SNAPSHOT" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.6" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -39,7 +39,7 @@
       </splashScreen>
       <java mainClass="edu.isi.bmkeg.lapdf.bin.Blockify" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="lapdftext-1.7.2-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
+          <archive location="lapdftext-1.7.3-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -68,7 +68,7 @@
       </splashScreen>
       <java mainClass="edu.isi.bmkeg.lapdf.bin.BlockStatistics" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="lapdftext-1.7.2-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
+          <archive location="lapdftext-1.7.3-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -97,7 +97,7 @@
       </splashScreen>
       <java mainClass="edu.isi.bmkeg.lapdf.bin.BlockifyClassify" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="lapdftext-1.7.2-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
+          <archive location="lapdftext-1.7.3-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -126,7 +126,7 @@
       </splashScreen>
       <java mainClass="edu.isi.bmkeg.lapdf.bin.ReadSectionText" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="lapdftext-1.7.2-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
+          <archive location="lapdftext-1.7.3-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -155,7 +155,7 @@
       </splashScreen>
       <java mainClass="edu.isi.bmkeg.lapdf.bin.WatchDirectory" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="lapdftext-1.7.2-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
+          <archive location="lapdftext-1.7.3-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -184,7 +184,7 @@
       </splashScreen>
       <java mainClass="edu.isi.bmkeg.lapdf.bin.ImagifyBlocks" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="lapdftext-1.7.2-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
+          <archive location="lapdftext-1.7.3-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -213,7 +213,7 @@
       </splashScreen>
       <java mainClass="edu.isi.bmkeg.lapdf.bin.ImagifySections" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
         <classPath>
-          <archive location="lapdftext-1.7.2-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
+          <archive location="lapdftext-1.7.3-SNAPSHOT-jar-with-dependencies.jar" failOnError="false" />
         </classPath>
         <nativeLibraryDirectories />
       </java>
@@ -231,7 +231,7 @@
       <iconImageFiles />
     </launcher>
     <launcher name="debugChunkFeatures" id="229" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="">
-      <executable name="debugChunkFeatures" type="1" iconSet="false" iconFile="" executableDir="" redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
+      <executable name="debugChunkFeatures" type="1" iconSet="false" iconFile="" executableDir="" redirectStderr="false" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="2" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
       <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
@@ -589,7 +589,9 @@
       <includedDownloadableComponents />
     </windows>
   </mediaSets>
-  <buildIds buildAll="true" />
+  <buildIds buildAll="true">
+    <mediaSet refId="29" />
+  </buildIds>
   <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
 </install4j>
 
