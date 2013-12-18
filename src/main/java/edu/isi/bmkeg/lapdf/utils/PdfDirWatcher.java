@@ -4,22 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import edu.isi.bmkeg.lapdf.bin.CommandLineTool;
 import edu.isi.bmkeg.lapdf.bin.WatchDirectory;
 import edu.isi.bmkeg.lapdf.controller.LapdfEngine;
-import edu.isi.bmkeg.lapdf.controller.LapdfMode;
-import edu.isi.bmkeg.lapdf.model.Block;
+import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
-import edu.isi.bmkeg.lapdf.uima.cpe.CommandLineFitPipeline;
 import edu.isi.bmkeg.utils.Converters;
 import edu.isi.bmkeg.utils.parser.DirWatcher;
 
@@ -149,7 +143,7 @@ public class PdfDirWatcher extends DirWatcher {
 				out.mkdir();
 
 			try {
-				LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+				LapdfDocument lapdf = engine.blockifyFile(pdf);
 				engine.dumpWordOrderImageOutlinesToFiles(lapdf, out, pdfStem);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -163,7 +157,7 @@ public class PdfDirWatcher extends DirWatcher {
 				out.mkdir();
 
 			try {
-				LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+				LapdfDocument lapdf = engine.blockifyFile(pdf);
 				engine.classifyDocument(lapdf, ruleFile);
 				engine.dumpWordOrderImageOutlinesToFiles(lapdf, out, pdfStem);
 			} catch (Exception e) {
@@ -176,7 +170,7 @@ public class PdfDirWatcher extends DirWatcher {
 			out = new File(outPath);
 
 			try {
-				LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+				LapdfDocument lapdf = engine.blockifyFile(pdf);
 				engine.writeSpatialXmlToFile(lapdf, out);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -188,7 +182,7 @@ public class PdfDirWatcher extends DirWatcher {
 			out = new File(outPath);
 
 			try {
-				LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+				LapdfDocument lapdf = engine.blockifyFile(pdf);
 				engine.classifyDocument(lapdf, ruleFile);
 				engine.writeSectionsToOpenAccessXmlFile(lapdf, out);
 			} catch (Exception e) {
@@ -199,18 +193,18 @@ public class PdfDirWatcher extends DirWatcher {
 
 			List<Set<String>> stack = new ArrayList<Set<String>>();
 			Set<String> sections = new HashSet<String>();
-			sections.add(Block.TYPE_BODY);
-			sections.add(Block.TYPE_HEADING);
+			sections.add(ChunkBlock.TYPE_BODY);
+			sections.add(ChunkBlock.TYPE_HEADING);
 			stack.add(sections);
 			sections = new HashSet<String>();
-			sections.add(Block.TYPE_FIGURE_LEGEND);
+			sections.add(ChunkBlock.TYPE_FIGURE_LEGEND);
 			stack.add(sections);
 
 			outPath = outPath.replaceAll("\\.pdf$", "") + "_fullText.txt";
 			File outFile = new File(outPath);
 
 			try {
-				LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+				LapdfDocument lapdf = engine.blockifyFile(pdf);
 				engine.classifyDocument(lapdf, ruleFile);
 				engine.writeTextToFile(lapdf, stack, outFile);
 			} catch (Exception e) {

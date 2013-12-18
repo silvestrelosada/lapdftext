@@ -18,6 +18,7 @@ import edu.isi.bmkeg.lapdf.model.WordBlock;
 import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
 
+@Deprecated
 public class SpatialXMLWriter implements XMLWriter {
 	
 	private static final String NEWLINE = System.getProperty("line.separator");
@@ -74,8 +75,8 @@ public class SpatialXMLWriter implements XMLWriter {
 				pageAttribute.addAttribute("", "", BLOCK_ATTRIBUTE_Y2, "CDATA",
 						page.getMargin()[3] + "");
 
-				pageAttribute.addAttribute("", "", BLOCK_ATTRIBUTE_TYPE,
-						"CDATA", page.getType() + "");
+//				pageAttribute.addAttribute("", "", BLOCK_ATTRIBUTE_TYPE,
+//						"CDATA", page.getType() + "");
 
 				pageAttribute.addAttribute("", "", PAGE_ATTRIBUTE_CHUNK_COUNT,
 						"CDATA", page.getAllChunkBlocks(null).size() + "");

@@ -2,9 +2,9 @@ package edu.isi.bmkeg.lapdf.model;
 
 import java.util.List;
 
-import edu.isi.bmkeg.lapdf.model.spatial.SpatialRepresentation;
+import edu.isi.bmkeg.lapdf.model.spatial.SpatialContainer;
 
-public interface PageBlock extends Block, SpatialRepresentation {
+public interface PageBlock extends Block, SpatialContainer {
 
 	public int getPageNumber();
 

@@ -1,5 +1,7 @@
 package edu.isi.bmkeg.lapdf.model;
 
+/** Static variables denoting direction in a document**/
+
 public class LapdfDirection {
 
 	public static int CENTER = -1;

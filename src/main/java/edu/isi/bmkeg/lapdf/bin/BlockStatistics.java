@@ -14,7 +14,9 @@ import edu.isi.bmkeg.lapdf.controller.LapdfMode;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
 import edu.isi.bmkeg.lapdf.text.SpatialLayoutFeaturesReportGenerator;
 import edu.isi.bmkeg.lapdf.uima.cpe.CommandLineFitPipeline;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
 import edu.isi.bmkeg.utils.Converters;
+import edu.isi.bmkeg.utils.xml.XmlBindingTools;
 
 public class BlockStatistics {
 
@@ -84,16 +86,8 @@ public class BlockStatistics {
 
 				File outFile = new File(outPath + "_bStats.txt");
 
-				try {
-
-					LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
-					engine.writeSpatialXmlToFile(lapdf, outFile);
-
-				} catch (Exception e) {
-
-					e.printStackTrace();
-
-				}
+				LapdfDocument lapdf = engine.blockifyFile(pdf);
+				engine.writeSpatialFeaturesReport(lapdf, outFile);
 
 			}
 
@@ -105,7 +99,7 @@ public class BlockStatistics {
 			String outPath = outDir.getPath() + "/" + pdfStem + "_bStats.txt";
 			File outFile = new File(outPath);
 
-			LapdfDocument lapdf = engine.blockifyPdfFile(inputFileOrDir);
+			LapdfDocument lapdf = engine.blockifyFile(inputFileOrDir);
 			engine.writeSpatialFeaturesReport(lapdf, outFile);
 		}
 

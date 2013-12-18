@@ -107,7 +107,7 @@ public class DebugLapdfFeatures {
 												
 				try {
 	
-					LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+					LapdfDocument lapdf = engine.blockifyFile(pdf);
 					engine.classifyDocument(lapdf, ruleFile);
 					
 					engine.writeSectionsToOpenAccessXmlFile(lapdf, outXmlFile);
@@ -141,7 +141,7 @@ public class DebugLapdfFeatures {
 			if( !outImgDir.exists() )
 				outImgDir.mkdirs();
 			
-			LapdfDocument lapdf = engine.blockifyPdfFile(inputFileOrDir);
+			LapdfDocument lapdf = engine.blockifyFile(inputFileOrDir);
 			engine.classifyDocument(lapdf, ruleFile);
 
 			engine.writeSectionsToOpenAccessXmlFile(lapdf, outXmlFile);

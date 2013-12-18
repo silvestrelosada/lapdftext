@@ -13,7 +13,6 @@ import org.apache.uima.resource.metadata.TypeSystemDescription;
 import org.uimafit.factory.CollectionReaderFactory;
 import org.uimafit.factory.TypeSystemDescriptionFactory;
 
-import edu.isi.bmkeg.lapdf.bin.CommandLineTool;
 import edu.isi.bmkeg.lapdf.uima.ae.ParserRuleBasedClassfierAE;
 import edu.isi.bmkeg.lapdf.uima.cr.DirectoryCollectionReader;
 import edu.isi.bmkeg.utils.PipelineLauncher;

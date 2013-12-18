@@ -24,7 +24,7 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 	private String mostPopularWordStyle;
 	
 	private String alignment = null;
-	private String type = Block.TYPE_UNCLASSIFIED;
+	private String type = ChunkBlock.TYPE_UNCLASSIFIED;
 	private Boolean headerOrFooter=null;
 	
 	private double density = -1;

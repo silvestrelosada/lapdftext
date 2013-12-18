@@ -27,8 +27,6 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 	private Block container;
 	private RTPageBlock page;
 
-	private String type = Block.TYPE_UNCLASSIFIED;
-
 	private int[] localDistances; 
 	private int orderAddedToChunk;
 	private WordBlock[] flushArray; 
@@ -57,27 +55,25 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 
 	@Override
 	public int getId() {
-
 		return super.getId();
 	}
 	
+	@Override
 	public void setFont(String font) {
 		this.font = font;
 	}
 
 	@Override
 	public String getFont() {
-
 		return font;
 	}
 
 	@Override
 	public String getFontStyle() {
-
 		return fontStyle;
-
 	}
 
+	@Override
 	public void setFontStyle(String fontStyle) {
 		this.fontStyle = fontStyle;
 	}
@@ -125,18 +121,6 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 		this.page = (RTPageBlock) page;
 	}
 	
-	@Override
-	public String getType() {
-
-		return type;
-	}
-
-	@Override
-	public void setType(String type) {
-		this.type = type;
-
-	}
-
 	@Override
 	public String readLeftRightMidLine() {
 		PageBlock parent = (PageBlock) this.getContainer().getContainer();

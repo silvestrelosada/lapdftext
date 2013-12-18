@@ -215,7 +215,6 @@ public class JPedalExtractor implements Extractor {
 						" in '" + this.currentFile.getName() + "', info:" + 
 						wordBlock.toString() + "\n");
 			}
-
 			
 			wordListPerPage.add(wordBlock);
 

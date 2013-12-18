@@ -9,7 +9,9 @@ import java.util.regex.Pattern;
 
 import edu.isi.bmkeg.lapdf.controller.LapdfEngine;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
 import edu.isi.bmkeg.utils.Converters;
+import edu.isi.bmkeg.utils.xml.XmlBindingTools;
 
 public class BlockifyClassify {
 
@@ -98,19 +100,16 @@ public class BlockifyClassify {
 				String outXmlPath = Converters.mimicDirectoryStructure(
 						inputFileOrDir, outDir, pdf).getPath();
 				outXmlPath = outXmlPath.replaceAll("\\.pdf", "")
-						+ "_openAccess.xml";
+						+ "_lapdf.xml";
 				File outXmlFile = new File(outXmlPath);
 
-				try {
-					LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
-					engine.classifyDocument(lapdf, ruleFile);
-					engine.writeSectionsToOpenAccessXmlFile(lapdf, outXmlFile);
-				} catch (Exception e) {
-
-					e.printStackTrace();
-
-				}
-
+				LapdfDocument lapdf = engine.blockifyFile(pdf);
+				engine.classifyDocument(lapdf, ruleFile);
+				
+				LapdftextXMLDocument xmlDoc = lapdf
+						.convertToLapdftextXmlFormat();
+				XmlBindingTools.saveAsXml(xmlDoc, outXmlFile);
+				
 			}
 
 		} else {
@@ -118,12 +117,14 @@ public class BlockifyClassify {
 			String pdfStem = inputFileOrDir.getName();
 			pdfStem = pdfStem.replaceAll("\\.pdf", "");
 
-			String outPath = outDir + "/" + pdfStem + "_openAccess.xml";
-			File outFile = new File(outPath);
+			String outPath = outDir + "/" + pdfStem + "_lapdf.xml";
+			File outXmlFile = new File(outPath);
 
-			LapdfDocument lapdf = engine.blockifyPdfFile(inputFileOrDir);
+			LapdfDocument lapdf = engine.blockifyFile(inputFileOrDir);
 			engine.classifyDocument(lapdf, ruleFile);
-			engine.writeSectionsToOpenAccessXmlFile(lapdf, outFile);
+			LapdftextXMLDocument xmlDoc = lapdf
+					.convertToLapdftextXmlFormat();
+			XmlBindingTools.saveAsXml(xmlDoc, outXmlFile);
 			
 		}
 		

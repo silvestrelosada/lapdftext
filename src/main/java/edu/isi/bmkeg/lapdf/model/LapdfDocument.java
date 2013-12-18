@@ -5,12 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import edu.isi.bmkeg.lapdf.extraction.exceptions.InvalidPopularSpaceValueException;
-import edu.isi.bmkeg.lapdf.model.RTree.RTPageBlock;
 import edu.isi.bmkeg.lapdf.model.RTree.RTSpatialEntity;
 import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
@@ -22,6 +23,7 @@ import edu.isi.bmkeg.lapdf.pmcXml.PmcXmlSec;
 import edu.isi.bmkeg.lapdf.pmcXml.PmcXmlTitle;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLChunk;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLFontStyle;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLPage;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLRectangle;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLWord;
@@ -49,6 +51,11 @@ public class LapdfDocument implements Serializable {
 	private boolean jPedalDecodeFailed;
 	
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	public LapdfDocument() {
+		this.setAvgHeightFrequencyCounter(new IntegerFrequencyCounter(1));
+		this.setFontFrequencyCounter(new FrequencyCounter());
+	}
 	
 	public LapdfDocument(File pdfFile) {
 		this.setPdfFile(pdfFile);
@@ -209,26 +216,6 @@ public class LapdfDocument implements Serializable {
 	
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public void packForSerialization() {
-
-		this.setBodyTextFrame(null);
-		for (int i = 1; i <= this.getTotalNumberOfPages(); i++) {	
-			RTPageBlock page = (RTPageBlock) this.getPage(i);
-			page.packForSerialization();
-		}	
-	
-	}
-	
-	public void unpackFromSerialization() {
-	
-		for (int i = 1; i <= this.getTotalNumberOfPages(); i++) {	
-			RTPageBlock page = (RTPageBlock) this.getPage(i);
-			page.unpackFromSerialization();
-		}	
-		this.calculateBodyTextFrame();
-		
-	}
-
 	public void calculateBodyTextFrame() {
 
 		String mp = (String) this.fontFrequencyCounter.getMostPopular();
@@ -261,7 +248,7 @@ public class LapdfDocument implements Serializable {
 						 y_min = wd.getY1();
 					if( wd.getY2() > y_max )
 						 y_max = wd.getY2();
-					
+				
 				}
 			
 			}
@@ -470,6 +457,9 @@ public class LapdfDocument implements Serializable {
 		
 		LapdftextXMLDocument xmlDoc = new LapdftextXMLDocument();
 		
+		Map<String, Integer> fontStyles = new HashMap<String, Integer>();
+		int fsCount = 0;
+		
 		int nPages = this.getTotalNumberOfPages();
 		int id = 0;
 		for( int i=0; i<nPages; i++ ) {
@@ -538,13 +528,30 @@ public class LapdfDocument implements Serializable {
 						xmlWord.setH( word.getY2() - word.getY1() );
 						xmlWord.setX( word.getX1() );
 						xmlWord.setY( word.getY1() );
+						
+						if( !fontStyles.containsKey( word.getFont() ) ) {
+							fontStyles.put(word.getFont(), fsCount++);
+						} 
+						xmlWord.setfId(fontStyles.get( word.getFont() ) );
 											
+						if( !fontStyles.containsKey( word.getFontStyle() ) ) {
+							fontStyles.put(word.getFontStyle(), fsCount++);
+						} 
+						xmlWord.setsId(fontStyles.get( word.getFontStyle() ) );
+						
 					}
 					
 				}
 				
 			}
 			
+		}
+		
+		for( String fsStr : fontStyles.keySet() ) {
+			LapdftextXMLFontStyle fsXml = new LapdftextXMLFontStyle();
+			fsXml.setFontStyle(fsStr);
+			fsXml.setId(fontStyles.get(fsStr));
+			xmlDoc.getFontStyles().add(fsXml);
 		}
 		
 		return xmlDoc;
@@ -579,9 +586,9 @@ public class LapdfDocument implements Serializable {
 		//
 		xmlSecList.addAll( this.buildPmxXmlSecListFromBodyHeading(true) );
 		
-		xmlSecList.addAll(buildPmxXmlSecListFromStem( Block.TYPE_REFERENCES ));
+		xmlSecList.addAll(buildPmxXmlSecListFromStem( ChunkBlock.TYPE_REFERENCES ));
 
-		xmlSecList.addAll(buildPmxXmlSecListFromStem( Block.TYPE_FIGURE_LEGEND ));		
+		xmlSecList.addAll(buildPmxXmlSecListFromStem( ChunkBlock.TYPE_FIGURE_LEGEND ));		
 			
 		return xmlDoc;
 	
@@ -666,15 +673,15 @@ public class LapdfDocument implements Serializable {
 		List<PmcXmlSec> xmlSecList = new ArrayList<PmcXmlSec>();
 		
 		PmcXmlSec xmlSec = factory.createPmcXmlSec();
-		xmlSec.setSecType(Block.TYPE_BODY);		
+		xmlSec.setSecType(ChunkBlock.TYPE_BODY);		
 		List<Object> pList = xmlSec.getAddressesAndAlternativesAndArraies();
 		xmlSecList.add(xmlSec);
 		
 		List<ChunkBlock> blocks = this.readAllChunkBlocks();
 		for ( ChunkBlock b : blocks ) {
 			
-			if( b.getType().equals(Block.TYPE_BODY) || 
-					(b.getType().equals(Block.TYPE_UNCLASSIFIED) && includeUnclassified ) 
+			if( b.getType().equals(ChunkBlock.TYPE_BODY) || 
+					(b.getType().equals(ChunkBlock.TYPE_UNCLASSIFIED) && includeUnclassified ) 
 					) {
 			
 				if( !goFlag ) {
@@ -685,8 +692,8 @@ public class LapdfDocument implements Serializable {
 				List<Object> content = xmlP.getContent();
 				content.add( b.readChunkText() );
 			
-			} else if( b.getType().equals(Block.TYPE_HEADING) ||
-					 b.getType().equals(Block.TYPE_SUBTITLE) ) {
+			} else if( b.getType().equals(ChunkBlock.TYPE_HEADING) ||
+					 b.getType().equals(ChunkBlock.TYPE_SUBTITLE) ) {
 				
 				if( !goFlag ) {
 					goFlag = true;
@@ -699,7 +706,7 @@ public class LapdfDocument implements Serializable {
 				} else {
 					xmlSec = factory.createPmcXmlSec();
 					xmlSecList.add(xmlSec);
-					xmlSec.setSecType(Block.TYPE_BODY);
+					xmlSec.setSecType(ChunkBlock.TYPE_BODY);
 					xmlSecTitle = factory.createPmcXmlTitle();
 					xmlSec.setTitle(xmlSecTitle);
 					pList = xmlSec.getAddressesAndAlternativesAndArraies();
@@ -726,7 +733,7 @@ public class LapdfDocument implements Serializable {
 		List<PmcXmlSec> xmlSecList = new ArrayList<PmcXmlSec>();
 
 		PmcXmlSec xmlSec = factory.createPmcXmlSec();
-		xmlSec.setSecType(Block.TYPE_INTRODUCTION);
+		xmlSec.setSecType(ChunkBlock.TYPE_INTRODUCTION);
 
 		List<Object> pList = xmlSec.getAddressesAndAlternativesAndArraies();
 		PmcXmlP xmlP = factory.createPmcXmlP();
@@ -737,13 +744,13 @@ public class LapdfDocument implements Serializable {
 		
 		for (ChunkBlock b : blocks) {
 
-			if (b.getType().equals(Block.TYPE_INTRODUCTION)
-					|| b.getType().equals(Block.TYPE_INTRODUCTION_BODY)) {
+			if (b.getType().equals(ChunkBlock.TYPE_INTRODUCTION)
+					|| b.getType().equals(ChunkBlock.TYPE_INTRODUCTION_BODY)) {
 
 				content.add(b.readChunkText());
 
-			} else if (b.getType().equals(Block.TYPE_INTRODUCTION_HEADING)
-					|| b.getType().equals(Block.TYPE_INTRODUCTION_SUBTITLE)) {
+			} else if (b.getType().equals(ChunkBlock.TYPE_INTRODUCTION_HEADING)
+					|| b.getType().equals(ChunkBlock.TYPE_INTRODUCTION_SUBTITLE)) {
 
 				PmcXmlTitle xmlSecTitle = xmlSec.getTitle();
 				if (xmlSecTitle == null) {
@@ -752,7 +759,7 @@ public class LapdfDocument implements Serializable {
 				} else {
 					xmlSec = factory.createPmcXmlSec();
 					xmlSecList.add(xmlSec);
-					xmlSec.setSecType(Block.TYPE_INTRODUCTION);
+					xmlSec.setSecType(ChunkBlock.TYPE_INTRODUCTION);
 					xmlSecTitle = factory.createPmcXmlTitle();
 					xmlSec.setTitle(xmlSecTitle);
 				}

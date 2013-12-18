@@ -17,6 +17,8 @@ public class LapdftextXMLDocument implements Serializable {
 	
 	private List<LapdftextXMLPage> pages = new ArrayList<LapdftextXMLPage>();
 
+	private List<LapdftextXMLFontStyle> fontStyles = new ArrayList<LapdftextXMLFontStyle>();
+
 	@XmlAttribute
 	public Long getVpdmfId() {
 		return vpdmfId;
@@ -36,6 +38,14 @@ public class LapdftextXMLDocument implements Serializable {
 		this.pages = pages;
 	}
 
-	
+	@XmlElementWrapper( name="fontStyles" )
+    @XmlElement( name="fontStyle"  )
+	public List<LapdftextXMLFontStyle> getFontStyles() {
+		return fontStyles;
+	}
+
+	public void setFontStyles(List<LapdftextXMLFontStyle> fontStyles) {
+		this.fontStyles = fontStyles;
+	}
 	
 }

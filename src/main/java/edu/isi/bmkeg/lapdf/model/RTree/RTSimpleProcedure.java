@@ -13,17 +13,17 @@ import java.util.TreeSet;
 
 public class RTSimpleProcedure implements TIntProcedure {
 
-	private RTSpatialRepresentation tree;
+	private RTSpatialContainer spatialContainer;
 	private SpatialEntity foundEntity;
 
-	public RTSimpleProcedure(RTSpatialRepresentation tree) {
-		this.tree = tree;
+	public RTSimpleProcedure(RTSpatialContainer tree) {
+		this.spatialContainer = tree;
 	}
 
 	@Override
 	public boolean execute(int id) {
 		
-		SpatialEntity entity = this.tree.getEntity(id);
+		SpatialEntity entity = this.spatialContainer.getEntity(id);
 
 		if (entity!= null) {
 			
@@ -45,6 +45,5 @@ public class RTSimpleProcedure implements TIntProcedure {
 	public void setFoundEntity(SpatialEntity foundEntity) {
 		this.foundEntity = foundEntity;
 	}
-
 
 }

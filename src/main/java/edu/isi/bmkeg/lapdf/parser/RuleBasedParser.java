@@ -1,17 +1,17 @@
 package edu.isi.bmkeg.lapdf.parser;
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.math3.stat.clustering.Cluster;
-import org.apache.commons.math3.stat.clustering.KMeansPlusPlusClusterer;
 import org.apache.log4j.Logger;
 
 import edu.isi.bmkeg.lapdf.extraction.JPedalExtractor;
@@ -26,8 +26,14 @@ import edu.isi.bmkeg.lapdf.model.factory.AbstractModelFactory;
 import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
 import edu.isi.bmkeg.lapdf.utils.PageImageOutlineRenderer;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLChunk;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLFontStyle;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLPage;
+import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLWord;
 import edu.isi.bmkeg.utils.FrequencyCounter;
 import edu.isi.bmkeg.utils.IntegerFrequencyCounter;
+import edu.isi.bmkeg.utils.xml.XmlBindingTools;
 
 public class RuleBasedParser implements Parser {
 
@@ -91,6 +97,19 @@ public class RuleBasedParser implements Parser {
 
 	@Override
 	public LapdfDocument parse(File file) 
+			throws Exception {
+
+		if( file.getName().endsWith( ".pdf") ) {
+			return this.parsePdf(file);
+		} else if(file.getName().endsWith( "_lapdf.xml")) {
+			return this.parseXml(file);
+		} else {
+			throw new Exception("File type of " + file.getName() + " not *.pdf or *_lapdf.xml");
+		}
+
+	}
+		
+	public LapdfDocument parsePdf(File file) 
 			throws Exception {
 
 		LapdfDocument document = null;
@@ -228,6 +247,120 @@ public class RuleBasedParser implements Parser {
 		return document;
 	}
 
+	public LapdfDocument parseXml(File file) 
+			throws Exception {
+
+		FileReader reader = new FileReader(file);
+		LapdftextXMLDocument xmlDoc = XmlBindingTools.parseXML(reader, LapdftextXMLDocument.class);
+		
+		List<WordBlock> pageWordBlockList = null;
+		int pageCounter = 1;
+		int id = 0;
+		List<PageBlock> pageList = new ArrayList<PageBlock>();
+
+		LapdfDocument document = new LapdfDocument();
+
+		Map<Integer, String> fsMap = new HashMap<Integer,String>();
+		for( LapdftextXMLFontStyle xmlFs : xmlDoc.getFontStyles() ) {
+			fsMap.put( xmlFs.getId(), xmlFs.getFontStyle() );
+		}
+		
+		for( LapdftextXMLPage xmlPage : xmlDoc.getPages() ) {
+			
+			PageBlock pageBlock = modelFactory.createPageBlock(pageCounter, 
+					xmlPage.getW(), xmlPage.getH(), document);			
+			pageList.add(pageBlock);
+			
+			List<ChunkBlock> chunkBlockList = new ArrayList<ChunkBlock>();
+			
+			for( LapdftextXMLChunk xmlChunk : xmlPage.getChunks() ) {
+
+				String font = xmlChunk.getFont();
+				List<WordBlock> chunkWords = new ArrayList<WordBlock>();
+				
+				for( LapdftextXMLWord xmlWord : xmlChunk.getWords() ) {
+					
+					int x1 = xmlWord.getX();
+					int y1 = xmlWord.getY();
+					int x2 = xmlWord.getX() + xmlWord.getW();
+					int y2 = xmlWord.getY() + xmlWord.getH();
+										
+					WordBlock wordBlock = modelFactory.createWordBlock(x1, y1, x2,
+							y2, 1, font, "", xmlWord.getT() );
+					chunkWords.add(wordBlock);
+
+					pageBlock.add(wordBlock, xmlWord.getId());
+					wordBlock.setPage(pageBlock);
+
+					String f = fsMap.get( xmlWord.getfId() );
+					wordBlock.setFont( f );
+
+					String s = fsMap.get( xmlWord.getsId() );
+					wordBlock.setFontStyle( s );
+
+					// add this word's height and font to the counts.
+					document.getAvgHeightFrequencyCounter().add(
+							xmlWord.getH());
+					document.getFontFrequencyCounter().add(
+							f + ";" + s );
+
+				}
+				
+				ChunkBlock chunkBlock = buildChunkBlock(chunkWords, pageBlock);
+				chunkBlockList.add(chunkBlock);
+				
+				pageBlock.add(chunkBlock, xmlChunk.getId());
+				chunkBlock.setPage(pageBlock);
+				
+			}
+			
+			pageCounter++;
+			
+		}
+		
+		
+		//
+		// Calling 'hasNext()' get the text from JPedal.
+		// 
+		/*while (pageExtractor.hasNext()) {
+			
+			
+			pageWordBlockList = pageExtractor.next();
+
+			idGenerator = pageBlock.initialize(pageWordBlockList, idGenerator);
+
+			this.eastWestSpacing = (pageBlock.getMostPopularWordHeightPage()) / 2
+					+ pageBlock.getMostPopularHorizontalSpaceBetweenWordsPage();
+						
+			this.northSouthSpacing = (pageBlock.getMostPopularWordHeightPage() ) / 2
+					+ pageBlock.getMostPopularVerticalSpaceBetweenWordsPage();
+
+			buildChunkBlocks(pageWordBlockList, pageBlock);
+			
+			if (isDebugImages()) {
+				PageImageOutlineRenderer.dumpChunkTypePageImageToFile(
+						pageBlock,
+						new File(pth + "/_01_afterBuildBlocks" + pageBlock.getPageNumber() + ".png"),
+						file.getName() + "afterBuildBlocks"
+								+ pageBlock.getPageNumber() + ".png");
+			}
+
+		}*/
+
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		
+		if (!document.hasjPedalDecodeFailed()) {
+
+			document.addPages(pageList);
+
+			document.calculateBodyTextFrame();
+			document.calculateMostPopularFontStyles();
+
+		}
+
+		return document;
+	}	
+	
 	private void init(File file) throws Exception {
 
 		pageExtractor.init(file);

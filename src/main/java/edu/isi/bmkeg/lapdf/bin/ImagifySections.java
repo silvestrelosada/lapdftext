@@ -105,7 +105,7 @@ public class ImagifySections {
 				
 				try {
 	
-					LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+					LapdfDocument lapdf = engine.blockifyFile(pdf);
 					engine.classifyDocument(lapdf, ruleFile);
 					engine.dumpChunkTypeImageOutlinesToFiles(lapdf, outImgDir, pdfStem);
 				
@@ -127,7 +127,7 @@ public class ImagifySections {
 			if(!outImgDir.exists())
 				outImgDir.mkdir();
 			
-			LapdfDocument lapdf = engine.blockifyPdfFile(inputFileOrDir);
+			LapdfDocument lapdf = engine.blockifyFile(inputFileOrDir);
 			engine.classifyDocument(lapdf, ruleFile);
 			engine.dumpChunkTypeImageOutlinesToFiles(lapdf, outImgDir, pdfStem);
 			

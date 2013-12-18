@@ -14,12 +14,12 @@ import java.util.TreeSet;
 public class RTProcedure implements TIntProcedure {
 
 	private Collection<SpatialEntity> foundEntities;
-	private RTSpatialRepresentation tree;
+	private RTSpatialContainer tree;
 	private Class type = null;
 	private RTSpatialEntity sourceEnity;
 	private boolean isContainmentQuery;
 
-	public RTProcedure(RTSpatialRepresentation tree, String ordering,
+	public RTProcedure(RTSpatialContainer tree, String ordering,
 			RTSpatialEntity sourceEntity, Class type, boolean isContainmentQuery) {
 		
 		this.tree = tree;
@@ -72,18 +72,25 @@ public class RTProcedure implements TIntProcedure {
 	}
 
 	private boolean isSameInstance(SpatialEntity entity1, SpatialEntity entity2) {
+		
 		if (!this.isContainmentQuery)
 			return false;
+		
 		if (entity1 instanceof WordBlock && entity2 instanceof WordBlock) {
 
 			return entity1.equals(entity2);
+			
 		} else if (entity1 instanceof ChunkBlock
 				&& entity2 instanceof ChunkBlock) {
+		
 			return entity1.equals(entity2);
 
 		} else {
+
 			return false;
+		
 		}
+	
 	}
 
 }

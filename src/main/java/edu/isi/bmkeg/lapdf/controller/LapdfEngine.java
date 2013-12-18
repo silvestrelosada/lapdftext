@@ -142,7 +142,7 @@ public class LapdfEngine  {
 		
 		this.parser.setPath(outDir.getPath());
 		
-		LapdfDocument doc = blockifyPdfFile(inFile);
+		LapdfDocument doc = blockifyFile(inFile);
 		
 		if (doc == null) {
 			logger.info("Error encountered while performing block detection." +
@@ -186,7 +186,7 @@ public class LapdfEngine  {
 		
 		this.parser.setPath(outDir.getPath());
 		
-		LapdfDocument doc = blockifyPdfFile(inFile);
+		LapdfDocument doc = blockifyFile(inFile);
 		if (doc == null) {
 
 			logger.info("Error encountered while performing block detection. Skipping "
@@ -247,7 +247,7 @@ public class LapdfEngine  {
 		
 		logger.info("Running block detection on " + inFile.getPath());
 							
-		LapdfDocument doc = blockifyPdfFile(inFile);
+		LapdfDocument doc = blockifyFile(inFile);
 			
 		if (doc == null) {
 			logger.info("Error encountered while performing block detection. Skipping "
@@ -300,12 +300,12 @@ public class LapdfEngine  {
 	 * @throws EncryptionException
 	 * @throws IOException 
 	 */
-	public LapdfDocument blockifyPdfFile(File pdf) throws Exception {
+	public LapdfDocument blockifyFile(File f) throws Exception {
 		
 		LapdfDocument doc = null;
 		
-		doc = parser.parse(pdf);
-		doc.setPdfFile( pdf );
+		doc = parser.parse( f );
+		doc.setPdfFile( f );
 		
 		if (doc.hasjPedalDecodeFailed()) {
 			return null;
@@ -361,12 +361,12 @@ public class LapdfEngine  {
 		List<Set<String>> stack = new ArrayList<Set<String>>();
 		
 		Set<String> sections = new HashSet<String>();		
-		sections.add(Block.TYPE_BODY);
-		sections.add(Block.TYPE_HEADING);
+		sections.add(ChunkBlock.TYPE_BODY);
+		sections.add(ChunkBlock.TYPE_HEADING);
 		stack.add(sections);
 		
 		sections = new HashSet<String>();		
-		sections.add(Block.TYPE_FIGURE_LEGEND);
+		sections.add(ChunkBlock.TYPE_FIGURE_LEGEND);
 		stack.add(sections);
 				
 		return this.readClassifiedText(document, stack);
@@ -379,52 +379,52 @@ public class LapdfEngine  {
 		List<Set<String>> stack = new ArrayList<Set<String>>();
 		
 		Set<String> sections1 = new HashSet<String>();		
-		sections1.add(Block.TYPE_TITLE);
-		sections1.add(Block.TYPE_AUTHORS);
-		sections1.add(Block.TYPE_CITATION);
+		sections1.add(ChunkBlock.TYPE_TITLE);
+		sections1.add(ChunkBlock.TYPE_AUTHORS);
+		sections1.add(ChunkBlock.TYPE_CITATION);
 		stack.add(sections1);
 		
 		Set<String> sections2 = new HashSet<String>();		
-		sections2.add(Block.TYPE_ABSTRACT);
-		sections2.add(Block.TYPE_ABSTRACT_HEADING);
-		sections2.add(Block.TYPE_ABSTRACT_BODY);
+		sections2.add(ChunkBlock.TYPE_ABSTRACT);
+		sections2.add(ChunkBlock.TYPE_ABSTRACT_HEADING);
+		sections2.add(ChunkBlock.TYPE_ABSTRACT_BODY);
 		stack.add(sections2);
 		
 		Set<String> sections3 = new HashSet<String>();		
-		sections3.add(Block.TYPE_BODY);
-		sections3.add(Block.TYPE_HEADING);
-		sections3.add(Block.TYPE_METHODS);
-		sections3.add(Block.TYPE_METHODS_HEADING);
-		sections3.add(Block.TYPE_METHODS_BODY);
-		sections3.add(Block.TYPE_METHODS_SUBTITLE);
-		sections3.add(Block.TYPE_RESULTS);
-		sections3.add(Block.TYPE_RESULTS_HEADING);
-		sections3.add(Block.TYPE_RESULTS_BODY);
-		sections3.add(Block.TYPE_RESULTS_SUBTITLE);
-		sections3.add(Block.TYPE_DISCUSSION);
-		sections3.add(Block.TYPE_DISCUSSION_HEADING);
-		sections3.add(Block.TYPE_DISCUSSION_BODY);
-		sections3.add(Block.TYPE_DISCUSSION_SUBTITLE);
-		sections3.add(Block.TYPE_DISCUSSION);
-		sections3.add(Block.TYPE_CONCLUSIONS);
-		sections3.add(Block.TYPE_CONCLUSIONS_HEADING);
-		sections3.add(Block.TYPE_CONCLUSIONS_BODY);
-		sections3.add(Block.TYPE_CONCLUSIONS_SUBTITLE);
-		sections3.add(Block.TYPE_INTRODUCTION);
-		sections3.add(Block.TYPE_INTRODUCTION_HEADING);
-		sections3.add(Block.TYPE_INTRODUCTION_BODY);
-		sections3.add(Block.TYPE_INTRODUCTION_SUBTITLE);
+		sections3.add(ChunkBlock.TYPE_BODY);
+		sections3.add(ChunkBlock.TYPE_HEADING);
+		sections3.add(ChunkBlock.TYPE_METHODS);
+		sections3.add(ChunkBlock.TYPE_METHODS_HEADING);
+		sections3.add(ChunkBlock.TYPE_METHODS_BODY);
+		sections3.add(ChunkBlock.TYPE_METHODS_SUBTITLE);
+		sections3.add(ChunkBlock.TYPE_RESULTS);
+		sections3.add(ChunkBlock.TYPE_RESULTS_HEADING);
+		sections3.add(ChunkBlock.TYPE_RESULTS_BODY);
+		sections3.add(ChunkBlock.TYPE_RESULTS_SUBTITLE);
+		sections3.add(ChunkBlock.TYPE_DISCUSSION);
+		sections3.add(ChunkBlock.TYPE_DISCUSSION_HEADING);
+		sections3.add(ChunkBlock.TYPE_DISCUSSION_BODY);
+		sections3.add(ChunkBlock.TYPE_DISCUSSION_SUBTITLE);
+		sections3.add(ChunkBlock.TYPE_DISCUSSION);
+		sections3.add(ChunkBlock.TYPE_CONCLUSIONS);
+		sections3.add(ChunkBlock.TYPE_CONCLUSIONS_HEADING);
+		sections3.add(ChunkBlock.TYPE_CONCLUSIONS_BODY);
+		sections3.add(ChunkBlock.TYPE_CONCLUSIONS_SUBTITLE);
+		sections3.add(ChunkBlock.TYPE_INTRODUCTION);
+		sections3.add(ChunkBlock.TYPE_INTRODUCTION_HEADING);
+		sections3.add(ChunkBlock.TYPE_INTRODUCTION_BODY);
+		sections3.add(ChunkBlock.TYPE_INTRODUCTION_SUBTITLE);
 		stack.add(sections3);
 		
 		Set<String> sections4 = new HashSet<String>();		
-		sections4.add(Block.TYPE_ACKNOWLEDGEMENTS);
-		sections4.add(Block.TYPE_ACKNOWLEDGEMENTS_HEADING);
-		sections4.add(Block.TYPE_ACKNOWLEDGEMENTS_BODY);
+		sections4.add(ChunkBlock.TYPE_ACKNOWLEDGEMENTS);
+		sections4.add(ChunkBlock.TYPE_ACKNOWLEDGEMENTS_HEADING);
+		sections4.add(ChunkBlock.TYPE_ACKNOWLEDGEMENTS_BODY);
 		stack.add(sections4);
 
 		Set<String> sections5 = new HashSet<String>();		
-		sections5.add(Block.TYPE_FIGURE_LEGEND);
-		sections5.add(Block.TYPE_TABLE);
+		sections5.add(ChunkBlock.TYPE_FIGURE_LEGEND);
+		sections5.add(ChunkBlock.TYPE_TABLE);
 		stack.add(sections5);
 				
 		String text = this.readClassifiedText(document, stack);

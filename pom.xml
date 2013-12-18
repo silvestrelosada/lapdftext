@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.isi.bmkeg</groupId>
 	<artifactId>lapdftext</artifactId>
-	<version>1.7.3-SNAPSHOT</version>
+	<version>1.7.4-SNAPSHOT</version>
 	<name>LA-PDFText</name>
 	<description>A text extraction tool based on blocking of PDF files.</description>
 

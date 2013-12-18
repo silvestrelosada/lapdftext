@@ -1,7 +1,6 @@
 package edu.isi.bmkeg.lapdf.bin;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,7 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import edu.isi.bmkeg.lapdf.controller.LapdfEngine;
-import edu.isi.bmkeg.lapdf.model.Block;
+import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
 import edu.isi.bmkeg.utils.Converters;
 
@@ -109,11 +108,11 @@ public class ReadSectionText {
 		if (sec1.equals("-")) {
 
 			Set<String> sections = new HashSet<String>();
-			sections.add(Block.TYPE_BODY);
-			sections.add(Block.TYPE_HEADING);
+			sections.add(ChunkBlock.TYPE_BODY);
+			sections.add(ChunkBlock.TYPE_HEADING);
 			stack.add(sections);
 			sections = new HashSet<String>();
-			sections.add(Block.TYPE_FIGURE_LEGEND);
+			sections.add(ChunkBlock.TYPE_FIGURE_LEGEND);
 			stack.add(sections);
 
 		} else {
@@ -143,7 +142,7 @@ public class ReadSectionText {
 	
 				try {
 	
-					LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+					LapdfDocument lapdf = engine.blockifyFile(pdf);
 					engine.classifyDocument(lapdf, ruleFile);
 					engine.writeTextToFile(lapdf, stack, outFile);
 	
@@ -163,7 +162,7 @@ public class ReadSectionText {
 			String outPath = outDir + "/" + pdfStem + "_fullText" + ".txt";
 			File outFile = new File(outPath);
 
-			LapdfDocument lapdf = engine.blockifyPdfFile(inputFileOrDir);
+			LapdfDocument lapdf = engine.blockifyFile(inputFileOrDir);
 			engine.classifyDocument(lapdf, ruleFile);
 			engine.writeTextToFile(lapdf, stack, outFile);
 			

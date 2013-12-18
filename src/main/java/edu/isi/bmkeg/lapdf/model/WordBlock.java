@@ -11,7 +11,11 @@ public interface WordBlock extends Block, SpatialEntity {
 
 	public String getFont();
 
+	void setFont(String font);
+
 	public String getFontStyle();
+
+	void setFontStyle(String fontStyle); 
 
 	public int getSpaceWidth();
 
@@ -33,6 +37,6 @@ public interface WordBlock extends Block, SpatialEntity {
 
 	public void writeFlushArray(List<WordBlock> wordsToCheck); 
 
-	public WordBlock[] getFlushArray(); 
+	public WordBlock[] getFlushArray();
 	
 }

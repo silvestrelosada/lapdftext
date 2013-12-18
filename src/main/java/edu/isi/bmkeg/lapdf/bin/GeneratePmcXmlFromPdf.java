@@ -1,26 +1,26 @@
 package edu.isi.bmkeg.lapdf.bin;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import edu.isi.bmkeg.lapdf.controller.LapdfEngine;
-import edu.isi.bmkeg.lapdf.controller.LapdfMode;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
 import edu.isi.bmkeg.utils.Converters;
 import edu.isi.bmkeg.utils.xml.XmlBindingTools;
 
-public class Blockify {
+public class GeneratePmcXmlFromPdf {
 
-	private static String USAGE = "usage: <input-dir-or-file> [<output-dir>]\n\n"
+	private static String USAGE = "usage: <input-dir-or-file> [<output-dir>] [<rule-file>]\n\n"
 			+ "<input-dir-or-file> - the full path to the PDF file or directory to be extracted \n"
-			+ "<output-dir> (optional or '-') - the full path to the output directory \n\n"
+			+ "<output-dir> (optional or '-') - the full path to the output directory \n"
+			+ "<rule-file> (optional or '-') - the full path to the rule file \n\n"
 			+ "Running this command on a PDF file or directory will attempt to generate \n"
-			+ "one XML document per file with unnannotated text chunks .\n";
+			+ "one XML document per file with text chunks annotated with section.\n";
 
 	public static void main(String args[]) throws Exception {
 
@@ -33,6 +33,7 @@ public class Blockify {
 
 		String inputFileOrDirPath = args[0];
 		String outputDirPath = "";
+		String ruleFilePath = "";
 
 		File inputFileOrDir = new File(inputFileOrDirPath);
 		if (!inputFileOrDir.exists()) {
@@ -63,6 +64,27 @@ public class Blockify {
 			outDir.mkdir();
 		}
 
+		// output folder is set.
+		File ruleFile = null;
+		if (args.length > 2) {
+			ruleFilePath = args[2];
+		} else {
+			ruleFilePath = "-";
+		}
+
+		if (ruleFilePath.equals("-")) {
+			ruleFile = Converters
+					.extractFileFromJarClasspath("rules/general.drl");
+		} else {
+			ruleFile = new File(ruleFilePath);
+		}
+
+		if (!ruleFile.exists()) {
+			System.err.println(USAGE);
+			System.err.println(ruleFilePath + " does not exist.");
+			System.err.println("Please include full path");
+		}
+
 		if (inputFileOrDir.isDirectory()) {
 
 			Pattern patt = Pattern.compile("\\.pdf$");
@@ -77,15 +99,17 @@ public class Blockify {
 
 				String outXmlPath = Converters.mimicDirectoryStructure(
 						inputFileOrDir, outDir, pdf).getPath();
-				outXmlPath = outXmlPath.replaceAll("\\.pdf", "_lapdf.xml");
-
-				File outFile = new File(outXmlPath);
+				outXmlPath = outXmlPath.replaceAll("\\.pdf", "")
+						+ "_openAccess.xml";
+				File outXmlFile = new File(outXmlPath);
 
 				LapdfDocument lapdf = engine.blockifyFile(pdf);
+				engine.classifyDocument(lapdf, ruleFile);
+				
 				LapdftextXMLDocument xmlDoc = lapdf
 						.convertToLapdftextXmlFormat();
-				XmlBindingTools.saveAsXml(xmlDoc, outFile);
-
+				XmlBindingTools.saveAsXml(xmlDoc, outXmlFile);
+				
 			}
 
 		} else {
@@ -93,15 +117,17 @@ public class Blockify {
 			String pdfStem = inputFileOrDir.getName();
 			pdfStem = pdfStem.replaceAll("\\.pdf", "");
 
-			String outPath = outDir + "/" + pdfStem + "_lapdf.xml";
-			File outFile = new File(outPath);
+			String outPath = outDir + "/" + pdfStem + "_openAccess.xml";
+			File outXmlFile = new File(outPath);
 
 			LapdfDocument lapdf = engine.blockifyFile(inputFileOrDir);
-			LapdftextXMLDocument xmlDoc = lapdf.convertToLapdftextXmlFormat();
-			XmlBindingTools.saveAsXml(xmlDoc, outFile);
-
+			engine.classifyDocument(lapdf, ruleFile);
+			LapdftextXMLDocument xmlDoc = lapdf
+					.convertToLapdftextXmlFormat();
+			XmlBindingTools.saveAsXml(xmlDoc, outXmlFile);
+			
 		}
-
+		
 	}
-
+	
 }

@@ -53,7 +53,7 @@ public class XmlifyTest extends TestCase
 	{		
 
 		LapdfEngine engine = new LapdfEngine();
-		LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+		LapdfDocument lapdf = engine.blockifyFile(pdf);
 		LapdftextXMLDocument xmlDoc = lapdf.convertToLapdftextXmlFormat();
 			
 		File outXml = new File( outputDir.getPath() + "/temp.xml");

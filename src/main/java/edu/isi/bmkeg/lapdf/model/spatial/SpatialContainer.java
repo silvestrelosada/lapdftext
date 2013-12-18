@@ -8,15 +8,15 @@ import edu.isi.bmkeg.lapdf.model.Block;
 import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.WordBlock;
 
-public interface SpatialRepresentation extends Serializable {
+public interface SpatialContainer extends Serializable {
 	
+	public int addAll(List<SpatialEntity> list, int startId);
+
 	public void add(SpatialEntity entity, int id);
 
 	public List<SpatialEntity> intersects(SpatialEntity entity, String ordering);
 
 	public SpatialEntity nearest(int x, int y, int maxDistance);
-
-	public int addAll(List<SpatialEntity> list, int startId);
 
 	public List<ChunkBlock> getAllChunkBlocks(String ordering);
 

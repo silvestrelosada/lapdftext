@@ -155,12 +155,12 @@ public class PageImageOutlineRenderer {
 
 				ChunkBlock chunk = (ChunkBlock) block;
 
-				if( chunk.getType() == Block.TYPE_UNCLASSIFIED ) {
-					if (countMap.get(Block.TYPE_UNCLASSIFIED) == null) {
-						countMap.put(Block.TYPE_UNCLASSIFIED, 1);
+				if( chunk.getType() == ChunkBlock.TYPE_UNCLASSIFIED ) {
+					if (countMap.get(ChunkBlock.TYPE_UNCLASSIFIED) == null) {
+						countMap.put(ChunkBlock.TYPE_UNCLASSIFIED, 1);
 					} else {
-						countMap.put(Block.TYPE_UNCLASSIFIED,
-								countMap.get(Block.TYPE_UNCLASSIFIED) + 1);
+						countMap.put(ChunkBlock.TYPE_UNCLASSIFIED,
+								countMap.get(ChunkBlock.TYPE_UNCLASSIFIED) + 1);
 					}
 				} else {
 					if (countMap.get(chunk.getType()) == null) {
@@ -274,12 +274,12 @@ public class PageImageOutlineRenderer {
 
 				ChunkBlock chunk = (ChunkBlock) block;
 
-				if( chunk.getType().equals(Block.TYPE_UNCLASSIFIED) ) {
-					if (countMap.get(Block.TYPE_UNCLASSIFIED) == null) {
-						countMap.put(Block.TYPE_UNCLASSIFIED, 1);
+				if( chunk.getType().equals(ChunkBlock.TYPE_UNCLASSIFIED) ) {
+					if (countMap.get(ChunkBlock.TYPE_UNCLASSIFIED) == null) {
+						countMap.put(ChunkBlock.TYPE_UNCLASSIFIED, 1);
 					} else {
-						countMap.put(Block.TYPE_UNCLASSIFIED,
-								countMap.get(Block.TYPE_UNCLASSIFIED) + 1);
+						countMap.put(ChunkBlock.TYPE_UNCLASSIFIED,
+								countMap.get(ChunkBlock.TYPE_UNCLASSIFIED) + 1);
 					}
 				} else {
 					if (countMap.get(chunk.getType()) == null) {
@@ -309,71 +309,71 @@ public class PageImageOutlineRenderer {
 
 	private static int colorDecider(String type) {
 		
-		if (Block.TYPE_METHODS_HEADING.equals(type)) {
+		if (ChunkBlock.TYPE_METHODS_HEADING.equals(type)) {
 			return 0x0000ff;
-		} else if (Block.TYPE_METHODS_BODY.equals(type)) {
+		} else if (ChunkBlock.TYPE_METHODS_BODY.equals(type)) {
 			return 0x008000;
-		} else if (Block.TYPE_METHODS_SUBTITLE.equals(type)) {
+		} else if (ChunkBlock.TYPE_METHODS_SUBTITLE.equals(type)) {
 			return 0x00bfff;
-		} else if (Block.TYPE_RESULTS_HEADING.equals(type)) {
+		} else if (ChunkBlock.TYPE_RESULTS_HEADING.equals(type)) {
 			return 0x800080;
-		} else if (Block.TYPE_RESULTS_BODY.equals(type)) {
+		} else if (ChunkBlock.TYPE_RESULTS_BODY.equals(type)) {
 			return 0x800000;
-		} else if (Block.TYPE_RESULTS_SUBTITLE.equals(type)) {
+		} else if (ChunkBlock.TYPE_RESULTS_SUBTITLE.equals(type)) {
 			return 0x7cfc00;
-		} else if (Block.TYPE_REFERENCES_HEADING.equals(type)) {
+		} else if (ChunkBlock.TYPE_REFERENCES_HEADING.equals(type)) {
 			return 0xffff00;
-		} else if (Block.TYPE_REFERENCES_BODY.equals(type)) {
+		} else if (ChunkBlock.TYPE_REFERENCES_BODY.equals(type)) {
 			return 0xff69b4;
-		} else if (Block.TYPE_DISCUSSION_HEADING.equals(type)) {
+		} else if (ChunkBlock.TYPE_DISCUSSION_HEADING.equals(type)) {
 			return 0xff0000;
-		} else if (Block.TYPE_DISCUSSION_BODY.equals(type)) {
+		} else if (ChunkBlock.TYPE_DISCUSSION_BODY.equals(type)) {
 			return 0xfa8072;
-		} else if (Block.TYPE_DISCUSSION_SUBTITLE.equals(type)) {
+		} else if (ChunkBlock.TYPE_DISCUSSION_SUBTITLE.equals(type)) {
 			return 0xff4500;
-		} else if (Block.TYPE_CONCLUSIONS_HEADING.equals(type)) {
+		} else if (ChunkBlock.TYPE_CONCLUSIONS_HEADING.equals(type)) {
 			return 0xb8860b;
-		} else if (Block.TYPE_CONCLUSIONS_BODY.equals(type)) {
+		} else if (ChunkBlock.TYPE_CONCLUSIONS_BODY.equals(type)) {
 			return 0xbc8f8f;
-		} else if (Block.TYPE_CONCLUSIONS_SUBTITLE.equals(type)) {
+		} else if (ChunkBlock.TYPE_CONCLUSIONS_SUBTITLE.equals(type)) {
 			return 0xbdb76b;
-		} else if (Block.TYPE_ACKNOWLEDGEMENTS_HEADING.equals(type)) {
+		} else if (ChunkBlock.TYPE_ACKNOWLEDGEMENTS_HEADING.equals(type)) {
 			return 0x4b0082;
-		} else if (Block.TYPE_ACKNOWLEDGEMENTS_BODY.equals(type)) {
+		} else if (ChunkBlock.TYPE_ACKNOWLEDGEMENTS_BODY.equals(type)) {
 			return 0x556b2f;
-		} else if (Block.TYPE_ABSTRACT_HEADING.equals(type)) {
+		} else if (ChunkBlock.TYPE_ABSTRACT_HEADING.equals(type)) {
 			return 0xA9D0F5;
-		} else if (Block.TYPE_ABSTRACT_BODY.equals(type)) {
+		} else if (ChunkBlock.TYPE_ABSTRACT_BODY.equals(type)) {
 			return 0x00FFFF;
-		} else if (Block.TYPE_TITLE.equals(type)) {
+		} else if (ChunkBlock.TYPE_TITLE.equals(type)) {
 			return 0xdc143c;
-		} else if (Block.TYPE_AUTHORS.equals(type)) {
+		} else if (ChunkBlock.TYPE_AUTHORS.equals(type)) {
 			return 0xffa500;
-		} else if (Block.TYPE_INTRODUCTION_HEADING.equals(type)) {
+		} else if (ChunkBlock.TYPE_INTRODUCTION_HEADING.equals(type)) {
 			return 0xcd853f;
-		} else if (Block.TYPE_INTRODUCTION_BODY.equals(type)) {
+		} else if (ChunkBlock.TYPE_INTRODUCTION_BODY.equals(type)) {
 			return 0xd2691e;
-		} else if (Block.TYPE_INTRODUCTION_SUBTITLE.equals(type)) {
+		} else if (ChunkBlock.TYPE_INTRODUCTION_SUBTITLE.equals(type)) {
 			return 0xd2b48c;
-		} else if (Block.TYPE_SUPPORTING_INFORMATION_HEADING.equals(type)) {
+		} else if (ChunkBlock.TYPE_SUPPORTING_INFORMATION_HEADING.equals(type)) {
 			return 0x8b4513;
-		} else if (Block.TYPE_SUPPORTING_INFORMATION_BODY.equals(type)) {
+		} else if (ChunkBlock.TYPE_SUPPORTING_INFORMATION_BODY.equals(type)) {
 			return 0x8fbc8f;
-		} else if (Block.TYPE_SUPPORTING_INFORMATION_SUBTITLE.equals(type)) {
+		} else if (ChunkBlock.TYPE_SUPPORTING_INFORMATION_SUBTITLE.equals(type)) {
 			return 0x90ee90;
-		} else if (Block.TYPE_FIGURE_LEGEND.equals(type)) {
+		} else if (ChunkBlock.TYPE_FIGURE_LEGEND.equals(type)) {
 			return 0x000000;
-		} else if (Block.TYPE_AFFLIATION.equals(type)) {
+		} else if (ChunkBlock.TYPE_AFFLIATION.equals(type)) {
 			return TYPE_UNCLASSIFIED_COLOR_CODE;
-		} else if (Block.TYPE_HEADER.equals(type)) {
+		} else if (ChunkBlock.TYPE_HEADER.equals(type)) {
 			return TYPE_UNCLASSIFIED_COLOR_CODE;
-		} else if (Block.TYPE_FOOTER.equals(type)) {
+		} else if (ChunkBlock.TYPE_FOOTER.equals(type)) {
 			return TYPE_UNCLASSIFIED_COLOR_CODE;
-		} else if (Block.TYPE_KEYWORDS.equals(type)) {
+		} else if (ChunkBlock.TYPE_KEYWORDS.equals(type)) {
 			return TYPE_UNCLASSIFIED_COLOR_CODE;
-		} else if (Block.TYPE_TABLE.equals(type)) {
+		} else if (ChunkBlock.TYPE_TABLE.equals(type)) {
 			return TYPE_UNCLASSIFIED_COLOR_CODE;
-		} else if (Block.TYPE_CITATION.equals(type)) {
+		} else if (ChunkBlock.TYPE_CITATION.equals(type)) {
 			return TYPE_UNCLASSIFIED_COLOR_CODE;
 		} else {
 			return TYPE_UNCLASSIFIED_COLOR_CODE;

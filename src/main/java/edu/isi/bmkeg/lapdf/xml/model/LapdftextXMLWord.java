@@ -12,6 +12,10 @@ public class LapdftextXMLWord extends LapdftextXMLRectangle implements Serializa
 
 	private String t;
 
+	private int fId;
+
+	private int sId;
+
 	@XmlAttribute	
 	public String getT() {
 		return t;
@@ -19,6 +23,26 @@ public class LapdftextXMLWord extends LapdftextXMLRectangle implements Serializa
 
 	public void setT(String t) {
 		this.t = t;
-	}	
+	}
+
+	@XmlAttribute	
+	public int getfId() {
+		return fId;
+	}
+
+	public void setfId(int fId) {
+		this.fId = fId;
+	}
+
+	@XmlAttribute	
+	public int getsId() {
+		return sId;
+	}
+
+	public void setsId(int sId) {
+		this.sId = sId;
+	}
+
+
 	
 }

@@ -85,7 +85,7 @@ public class ImagifyBlocks
 				
 				try {
 	
-					LapdfDocument lapdf = engine.blockifyPdfFile(pdf);
+					LapdfDocument lapdf = engine.blockifyFile(pdf);
 					engine.dumpWordOrderImageOutlinesToFiles(lapdf, outImgDir, pdfStem);
 				
 				} catch (Exception e) {
@@ -106,7 +106,7 @@ public class ImagifyBlocks
 			if(!outImgDir.exists())
 				outImgDir.mkdir();
 			
-			LapdfDocument lapdf = engine.blockifyPdfFile(inputFileOrDir);
+			LapdfDocument lapdf = engine.blockifyFile(inputFileOrDir);
 			engine.dumpWordOrderImageOutlinesToFiles(lapdf, outImgDir, pdfStem);
 			
 		}

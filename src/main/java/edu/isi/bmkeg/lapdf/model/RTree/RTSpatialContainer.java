@@ -17,13 +17,10 @@ import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.WordBlock;
 import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
-import edu.isi.bmkeg.lapdf.model.spatial.SpatialRepresentation;
+import edu.isi.bmkeg.lapdf.model.spatial.SpatialContainer;
 import edu.isi.bmkeg.utils.IntegerFrequencyCounter;
 
-public class RTSpatialRepresentation implements SpatialRepresentation {
-
-	private Map<Integer, WordBlock> indexToWordBlockMap;
-	private Map<Integer, ChunkBlock> indexToChunkBlockMap;
+public abstract class RTSpatialContainer implements SpatialContainer {
 
 	private int mostPopularHorizontalSpaceBetweenWords = -100;
 	private int mostPopularWordWidth = -100;
@@ -33,15 +30,12 @@ public class RTSpatialRepresentation implements SpatialRepresentation {
 	
 	private List<WordBlock> list = null;
 	
-	private RTree tree;
+	protected RTree tree;
 
 	private int maxNode = 1500;
 	private int minNode = 1; 
 	
-	protected RTSpatialRepresentation() {
-		
-		this.indexToWordBlockMap = new HashMap<Integer, WordBlock>();
-		this.indexToChunkBlockMap = new HashMap<Integer, ChunkBlock>();
+	protected RTSpatialContainer() {
 		
 		Properties prp = new Properties();
 		prp.setProperty("MaxNodeEntries", "" + maxNode);
@@ -53,21 +47,14 @@ public class RTSpatialRepresentation implements SpatialRepresentation {
 	}
 
 	@Override
-	public void add(SpatialEntity entity, int id) {
+	public abstract void add(SpatialEntity entity, int id);
 
-		RTSpatialEntity rtSpatialEntity = (RTSpatialEntity) entity;
-		rtSpatialEntity.setId(id);
-		if (rtSpatialEntity instanceof ChunkBlock) {
-			this.indexToChunkBlockMap.put(id, (ChunkBlock) rtSpatialEntity);
-		} else {
-			this.indexToWordBlockMap.put(id, (WordBlock) rtSpatialEntity);
-
-		}
-
-		tree.add(rtSpatialEntity, id);
-		
-	}
-
+	@Override
+	public abstract SpatialEntity getEntity(int id);
+	
+	@Override
+	public abstract boolean delete(SpatialEntity entity, int id);
+	
 	@Override
 	public int addAll(List<SpatialEntity> list, int startId) {
 		for (SpatialEntity entity : list)
@@ -80,26 +67,6 @@ public class RTSpatialRepresentation implements SpatialRepresentation {
 
 		return this.intersectsByType(entity, ordering, null);
 	
-	}
-
-	@Override
-	public SpatialEntity getEntity(int id) {
-		if (indexToWordBlockMap.containsKey(id))
-			return indexToWordBlockMap.get(id);
-
-		return indexToChunkBlockMap.get(id);
-	}
-
-	@Override
-	public List<ChunkBlock> getAllChunkBlocks(String ordering) {
-
-		List<ChunkBlock> list = new ArrayList<ChunkBlock>(
-				indexToChunkBlockMap.values());
-		if (ordering != null) {
-			Collections.sort(list, new SpatialOrdering(ordering));
-		}
-
-		return list;
 	}
 
 	@Override
@@ -132,22 +99,6 @@ public class RTSpatialRepresentation implements SpatialRepresentation {
 	}
 
 	@Override
-	public boolean delete(SpatialEntity entity, int id) {
-
-		RTSpatialEntity rtSpatialEntity = (RTSpatialEntity) entity;
-
-		if (indexToChunkBlockMap.containsKey(id))
-			indexToChunkBlockMap.remove(id);
-		else
-			indexToWordBlockMap.remove(id);
-		
-		boolean treeDel = tree.delete(rtSpatialEntity, id);
-		
-		return treeDel;
-
-	}
-
-	@Override
 	public SpatialEntity nearest(int x, int y, int maxDistance) {
 
 		RTSimpleProcedure procedure = new RTSimpleProcedure(this);
@@ -157,8 +108,8 @@ public class RTSpatialRepresentation implements SpatialRepresentation {
 		this.tree.nearest(p, procedure, maxDistance);
 
 		return procedure.getFoundEntity();
+		
 	}
-	
 	
 	@Override
 	public List<SpatialEntity> intersectsByType(SpatialEntity entity,
@@ -170,17 +121,6 @@ public class RTSpatialRepresentation implements SpatialRepresentation {
 		tree.intersects((RTSpatialEntity) entity, procedure);
 
 		return procedure.getIntersectionList();
-	}
-
-	@Override
-	public List<WordBlock> getAllWordBlocks(String ordering) {
-		List<WordBlock> list = new ArrayList<WordBlock>(
-				indexToWordBlockMap.values());
-		if (ordering != null) {
-			Collections.sort(list, new SpatialOrdering(ordering));
-		}
-
-		return list;
 	}
 
 	@Override
@@ -390,37 +330,6 @@ public class RTSpatialRepresentation implements SpatialRepresentation {
 
 		list = null;
 
-	}
-	
-	public void packForSerialization() {
-		
-		this.tree = null;
-		
-	}
-	
-	public void unpackFromSerialization() {
-		
-		Properties prp = new Properties();
-		prp.setProperty("MaxNodeEntries", "" + maxNode);
-		prp.setProperty("MinNodeEntries", "" + minNode);
-
-		tree = new RTree();
-		tree.init(prp);
-		
-		Iterator<Integer> it = this.indexToChunkBlockMap.keySet().iterator();
-		while( it.hasNext() ) {
-			Integer id = it.next();
-			ChunkBlock r = this.indexToChunkBlockMap.get(id);
-			this.tree.add( (RTSpatialEntity) r, id );
-		}
-		
-		it = this.indexToWordBlockMap.keySet().iterator();
-		while( it.hasNext() ) {
-			Integer id = it.next();
-			WordBlock r = this.indexToWordBlockMap.get(id);
-			this.tree.add( (RTSpatialEntity) r, id );
-		}
-		
 	}
 
 }
