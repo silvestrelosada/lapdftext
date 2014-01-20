@@ -2,6 +2,8 @@ package edu.isi.bmkeg.lapdf.parser;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -251,6 +253,21 @@ public class RuleBasedParser implements Parser {
 			throws Exception {
 
 		FileReader reader = new FileReader(file);
+		return this.parseXml(reader);
+		
+	}
+
+	public LapdfDocument parseXml(String str) 
+			throws Exception {
+
+		StringReader reader = new StringReader(str);
+		return this.parseXml(reader);
+	
+	}
+	
+	private LapdfDocument parseXml(Reader reader) 
+			throws Exception {
+
 		LapdftextXMLDocument xmlDoc = XmlBindingTools.parseXML(reader, LapdftextXMLDocument.class);
 		
 		List<WordBlock> pageWordBlockList = null;

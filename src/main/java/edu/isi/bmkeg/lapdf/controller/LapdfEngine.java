@@ -314,6 +314,21 @@ public class LapdfEngine  {
 	
 	}
 
+	public LapdfDocument blockifyXml(String s) throws Exception {
+		
+		LapdfDocument doc = null;
+		
+		doc = parser.parseXml( s );
+		
+		if (doc.hasjPedalDecodeFailed()) {
+			return null;
+		}
+
+		return doc;
+	
+	}
+
+	
 	public void classifyDocumentWithBaselineRules(LapdfDocument document) 
 					throws ClassificationException, 
 					IOException, URISyntaxException {
@@ -638,6 +653,22 @@ public class LapdfEngine  {
 	public void dumpFeaturesToSpreadsheet(LapdfDocument doc, File outputFile) 
 			throws IOException {
 		
+		FileWriter fw = new FileWriter(outputFile);
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(this.dumpFeaturesToSpreadsheetString(doc));
+		bw.close();
+		
+	}
+
+	/**
+	 * 
+	 * @param doc
+	 * @param outputFile
+	 * @throws IOException
+	 */
+	public String dumpFeaturesToSpreadsheetString(LapdfDocument doc) 
+			throws IOException {
+		
 		/*
 		 * The features of ChunkBlocks to include
 		 *  
@@ -676,7 +707,13 @@ public class LapdfEngine  {
 		AbstractModelFactory modelFactory = new RTModelFactory();
 		
 		StringBuffer sb = new StringBuffer();
-		sb.append("RuleSet," + doc.getPdfFile().getName() + "\n");
+		
+		if( doc.getPdfFile() == null ) {
+			sb.append("RuleSet,\n");
+		} else {
+			sb.append("RuleSet," + doc.getPdfFile().getName() + "\n");
+		}
+		
 		sb.append("Import,\"edu.isi.bmkeg.lapdf.features.ChunkFeatures,edu.isi.bmkeg.lapdf.model.ChunkBlock\"\n");
 		sb.append("Variables,\"ChunkBlock chunk, ChunkFeatures chunkFeature\"\n");
 		sb.append("Sequential,true\n");
@@ -805,12 +842,7 @@ public class LapdfEngine  {
 			
 		}
 		
-		FileWriter fw = new FileWriter(outputFile);
-		BufferedWriter bw = new BufferedWriter(fw);
-		bw.write(sb.toString());
-		bw.close();
+		return sb.toString();
 		
 	}
-
-
 }

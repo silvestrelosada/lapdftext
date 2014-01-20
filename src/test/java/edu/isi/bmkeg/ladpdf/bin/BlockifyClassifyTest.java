@@ -25,11 +25,13 @@ public class BlockifyClassifyTest extends TestCase
 	protected void setUp() throws Exception
 	{ 
 				
-		URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8");
+		URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8/19960021.pdf");
+//		URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8/pbio.1000441.pdf");
 		inputDir = new File( u.getPath() );
 		outputDir = new File( inputDir.getParentFile().getPath() + "/temp/output" );
 				
-		u = this.getClass().getClassLoader().getResource("rules/plosbiology/epoch_7Jun_8.csv");
+		u = this.getClass().getClassLoader().getResource("rules/cellDeath_drl.xls");
+//		u = this.getClass().getClassLoader().getResource("rules/plosbiology/epoch_7Jun_8.csv");
 		ruleFile = new File( u.getPath() );
 
 	}
@@ -41,10 +43,10 @@ public class BlockifyClassifyTest extends TestCase
 		}
 	}
 
-	@Test
+/*	@Test
 	public void testInputFileOnly() throws Exception
 	{		
-		String[] args = {
+		String[] args = {m
 				inputDir.getPath(), "-", "-"
 			};
 		BlockifyClassify.main(args);
@@ -57,13 +59,13 @@ public class BlockifyClassifyTest extends TestCase
 				inputDir.getPath(), outputDir.getPath(), "-"
 			};
 		BlockifyClassify.main(args);
-	}
+	}*/
 
 	@Test
 	public void testInputOutputRuleFiles() throws Exception
 	{		
 		String[] args = {
-				inputDir.getPath(), outputDir.getPath(), ruleFile.getPath()
+				inputDir.getPath(), "-", ruleFile.getPath()
 			};
 		BlockifyClassify.main(args);
 	}

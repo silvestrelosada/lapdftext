@@ -4,12 +4,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import edu.isi.bmkeg.lapdf.extraction.exceptions.InvalidPopularSpaceValueException;
 import edu.isi.bmkeg.lapdf.model.RTree.RTSpatialEntity;
@@ -29,6 +39,7 @@ import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLRectangle;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLWord;
 import edu.isi.bmkeg.utils.FrequencyCounter;
 import edu.isi.bmkeg.utils.IntegerFrequencyCounter;
+import edu.isi.bmkeg.utils.xml.XmlBindingTools;
 
 public class LapdfDocument implements Serializable {
 
@@ -273,7 +284,7 @@ public class LapdfDocument implements Serializable {
 
 		//
 		// If there is a particularly long reference section, then we use the second 
-		// most poopular font style. Need to check if the last page is not just the 
+		// most popular font style. Need to check if the last page is not just the 
 		// same font as the rest of the document.
 		//
 		if( mp.equals( lastPage ) && mpCount < nmpCount * 7) {
@@ -584,7 +595,7 @@ public class LapdfDocument implements Serializable {
 		//
 		// NOTE: WHAT ABOUT OAI SECTION NAMES FOR DOCUMENT SECTION TYPES?
 		//
-		xmlSecList.addAll( this.buildPmxXmlSecListFromBodyHeading(true) );
+		xmlSecList.addAll( this.buildPmxXmlSecListFromBodyHeading(false) );
 		
 		xmlSecList.addAll(buildPmxXmlSecListFromStem( ChunkBlock.TYPE_REFERENCES ));
 
@@ -658,6 +669,7 @@ public class LapdfDocument implements Serializable {
 	}
 	
 	/**
+	 * What the hell is happening here?
 	 * 
 	 * @param stem
 	 * @return
@@ -772,6 +784,32 @@ public class LapdfDocument implements Serializable {
 
 		return xmlSecList;
 
+	}
+	
+	public String readPmcHtml() throws Exception {
+		
+		PmcXmlArticle pmcXml = this.convertToPmcXmlFormat(); 
+		StringWriter writer = new StringWriter();
+		XmlBindingTools.generateXML(pmcXml, writer);
+		String pmcXmlString = writer.toString();
+		
+		StringReader inputReader = new StringReader(pmcXmlString);
+		StringWriter outputWriter = new StringWriter();
+		
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Resource xslResource = new ClassPathResource(
+				"jatsPreviewStyleSheets/xslt/main/jats-html.xsl"
+				);
+		StreamSource xslt = new StreamSource(xslResource.getInputStream());
+		Transformer transformer = tf.newTransformer(xslt);
+
+		StreamSource source = new StreamSource(inputReader);
+		StreamResult result = new StreamResult(outputWriter);
+		transformer.transform(source, result);
+		String html = outputWriter.toString(); 
+
+		return html;
+		
 	}
 
 	

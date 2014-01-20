@@ -2,7 +2,7 @@ package edu.isi.bmkeg.lapdf.model.RTree;
 
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialContainer;
-import gnu.trove.TIntProcedure;
+import gnu.trove.procedure.TIntProcedure;
 
 public class RTDummyProcedure implements TIntProcedure {
 	

@@ -20,6 +20,7 @@ import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatelessKnowledgeSession;
 
 import edu.isi.bmkeg.lapdf.classification.Classifier;
+import edu.isi.bmkeg.lapdf.extraction.exceptions.ClassificationException;
 import edu.isi.bmkeg.lapdf.features.ChunkFeatures;
 import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.factory.AbstractModelFactory;
@@ -48,7 +49,7 @@ public class RuleBasedChunkClassifier implements Classifier<ChunkBlock> {
 	}
 	
 	public RuleBasedChunkClassifier(String droolsFileName,
-			AbstractModelFactory modelFactory) throws IOException  {
+			AbstractModelFactory modelFactory) throws IOException, ClassificationException  {
 
 		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 		kbase = KnowledgeBaseFactory.newKnowledgeBase();
@@ -94,13 +95,13 @@ public class RuleBasedChunkClassifier implements Classifier<ChunkBlock> {
 		}
 
 		if (kbuilder.hasErrors()) {
-			logger.error(kbuilder.getErrors());
-			
+
 			if( expandedFile != null ) {
 				Converters.recursivelyDeleteFiles(expandedFile.getParentFile());
 			}
+
+			throw new ClassificationException("Error in DROOLS run"+ kbuilder.getErrors());
 			
-			return;
 		}
 		
 		ArrayList<KnowledgePackage> kpkgs = new ArrayList<KnowledgePackage>(

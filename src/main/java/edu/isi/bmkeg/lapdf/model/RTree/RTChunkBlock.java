@@ -279,7 +279,9 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 	public boolean isMatchingRegularExpression(String regex) {
 		Pattern pattern = Pattern.compile(regex);
 
-		Matcher matcher = pattern.matcher(this.readChunkText());
+		String text = this.readChunkText();
+		Matcher matcher = pattern.matcher(text);
+		
 		if (matcher.find())
 			return true;
 

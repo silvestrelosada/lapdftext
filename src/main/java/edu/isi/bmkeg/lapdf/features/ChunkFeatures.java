@@ -110,14 +110,17 @@ public class ChunkFeatures {
 	 */
 	public int getMostPopularFontSize() {
 		
-		String fontStyle = chunk.getMostPopularWordStyle();
+		int fontSize = chunk.getMostPopularWordHeight();
+		return fontSize;
+		
+		/*String fontStyle = chunk.getMostPopularWordStyle();
 		if(fontStyle==null)
 			return chunk.getMostPopularWordHeight();
 		int fontSizeIndex = fontStyle.indexOf("font-size");
 		int colonIndex = fontStyle.indexOf(":", fontSizeIndex);
 		int ptIndex = fontStyle.indexOf("pt", colonIndex);
 		
-		return Integer.parseInt(fontStyle.substring(colonIndex + 1, ptIndex));
+		return Integer.parseInt(fontStyle.substring(colonIndex + 1, ptIndex));*/
 	
 	}
 	
