@@ -145,7 +145,7 @@ public class JPedalExtractor implements Extractor {
 
 	}
 
-	private void decodeFile() throws Exception {
+	private boolean decodeFile() throws Exception {
 
 		String font = null;
 		String currentWord;
@@ -178,7 +178,7 @@ public class JPedalExtractor implements Extractor {
 		if( words == null ) {
 			currentPage++;
 			PDFDecoder.flushObjectValues(false);
-			return;
+			return false;
 		}
 
 		Iterator<String> wordIterator = words.iterator();
@@ -222,38 +222,44 @@ public class JPedalExtractor implements Extractor {
 		
 		currentPage++;
 		PDFDecoder.flushObjectValues(false);
+
+		return true;
 	
 	}
 
 	@Override
 	public boolean hasNext() {
-		
-		if (currentPage <= pageCount) {
+
+		boolean haveNext = false;
+
+		while (currentPage <= pageCount && !haveNext) {
 
 			try {
-		
-				decodeFile();
+
+				haveNext = decodeFile();
 
 			} catch (EmptyPDFException e) {
-			
-				return false;
+
+				break;
 
 			} catch (Exception e) {
-			
+
 				e.printStackTrace();
-				return false;
-			
+				break;
+
 			}
 
-			return true;
-		
-		} else {
-		
+		}
+
+		if (currentPage == pageCount + 1) {
+
 			PDFDecoder.flushObjectValues(true);
 			PDFDecoder.closePdfFile();
-			return false;
-		
+			haveNext = false;
+
 		}
+
+		return haveNext;
 
 	}
 
