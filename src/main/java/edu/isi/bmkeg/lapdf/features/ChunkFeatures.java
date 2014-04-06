@@ -234,7 +234,8 @@ public class ChunkFeatures {
 				chunk.getX1(), 
 				chunk.getY1() - 30, 
 				chunk.getX2(), 
-				chunk.getY2() + 60);
+				chunk.getY2() + 60,
+				0);
 
 		int neighbouringChunksCount = parent.intersectsByType(block, null,
 				ChunkBlock.class).size();

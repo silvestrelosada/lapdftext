@@ -9,6 +9,8 @@ public interface SpatialEntity extends Serializable {
 
 	public SpatialEntity union(SpatialEntity entity);
 
+	public void add(SpatialEntity entity);
+	
 	public void resize(int X1,int Y1,int width,int height);
 
 	public int getY1();
@@ -31,5 +33,6 @@ public interface SpatialEntity extends Serializable {
 	
 	public void setId(int id);
 	
-	
+	public int getOrder();
+
 }

@@ -2,38 +2,35 @@ package edu.isi.bmkeg.lapdf.extraction;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.jpedal.PdfDecoder;
-import org.jpedal.exception.PdfException;
 import org.jpedal.grouping.PdfGroupingAlgorithms;
 import org.jpedal.objects.PdfPageData;
 import org.jpedal.utils.Strip;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
-import org.apache.log4j.Logger;
-
-import edu.isi.bmkeg.lapdf.classification.ruleBased.RuleBasedChunkClassifier;
 import edu.isi.bmkeg.lapdf.extraction.exceptions.AccessException;
 import edu.isi.bmkeg.lapdf.extraction.exceptions.EmptyPDFException;
 import edu.isi.bmkeg.lapdf.extraction.exceptions.EncryptionException;
 import edu.isi.bmkeg.lapdf.model.WordBlock;
 import edu.isi.bmkeg.lapdf.model.factory.AbstractModelFactory;
 import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
+import edu.isi.bmkeg.utils.FrequencyCounter;
+import edu.isi.bmkeg.utils.IntegerFrequencyCounter;
 
 public class JPedalExtractor implements Extractor {
 
@@ -48,6 +45,9 @@ public class JPedalExtractor implements Extractor {
 
 	private static int pageHeight;
 	private static int pageWidth;
+	private IntegerFrequencyCounter avgHeightFrequencyCounter;
+	private Map<Integer,IntegerFrequencyCounter> spaceFrequencyCounterMap;
+	
 	private AbstractModelFactory modelFactory;
 	
 	private File currentFile;
@@ -60,15 +60,17 @@ public class JPedalExtractor implements Extractor {
 		
 		this.modelFactory = modelFactory;
 		this.PDFDecoder = new PdfDecoder(false);
+		
+		this.avgHeightFrequencyCounter = new IntegerFrequencyCounter(1);
+		this.spaceFrequencyCounterMap = new HashMap<Integer, IntegerFrequencyCounter>();
 
-		PDFDecoder.setExtractionMode(PdfDecoder.TEXT); // extract just text
+		PDFDecoder.setExtractionMode(PdfDecoder.TEXT); 
 		PDFDecoder.init(true);
 		PdfGroupingAlgorithms.useUnrotatedCoords = true;
-		// if you do not require XML content, pure text extraction is much
-		// faster.
+		
+		// if you do not require XML content, 
+		// pure text extraction is much faster.
 		PDFDecoder.useXMLExtraction();
-
-		System.setProperty("hacked", "true");
 
 	}
 
@@ -77,7 +79,6 @@ public class JPedalExtractor implements Extractor {
 		if (PDFDecoder.isOpen()) {
 			PDFDecoder.flushObjectValues(true);
 			PDFDecoder.closePdfFile();
-
 		}
 		
 		this.currentFile = file;
@@ -109,7 +110,9 @@ public class JPedalExtractor implements Extractor {
 			dimensions[3] = currentPageData.getCropBoxY(currentPage);
 			dimensions[1] = currentPageData.getCropBoxHeight(currentPage)
 					+ dimensions[3];
+			
 		} else {
+			
 			dimensions[0] = currentPageData.getMediaBoxX(currentPage);
 			dimensions[2] = currentPageData.getMediaBoxWidth(currentPage)
 					+ dimensions[0];
@@ -117,7 +120,9 @@ public class JPedalExtractor implements Extractor {
 			dimensions[3] = currentPageData.getMediaBoxY(currentPage);
 			dimensions[1] = currentPageData.getMediaBoxHeight(currentPage)
 					+ dimensions[3];
+		
 		}
+		
 		return dimensions;
 
 	}
@@ -140,8 +145,6 @@ public class JPedalExtractor implements Extractor {
 			return null;
 
 		}
-
-		
 
 	}
 
@@ -170,7 +173,10 @@ public class JPedalExtractor implements Extractor {
 				dimensions[0], dimensions[1], dimensions[2], dimensions[3], 
 				currentPage,
 				true, 
-				"&:=()!;\\/\"\"\'\'"
+				"" 
+				// Used to be "&:=()!;\\/\"\"\'\'" 
+				// NOTE that this strips out these text elements 
+				// 		from the document as part of the parse!
 				);
 		
 		// If there are no words on the page (a common situation 
@@ -184,11 +190,17 @@ public class JPedalExtractor implements Extractor {
 		Iterator<String> wordIterator = words.iterator();
 
 		if (wordListPerPage == null)
-			wordListPerPage = new TreeSet<WordBlock>(new SpatialOrdering(SpatialOrdering.MIXED_MODE_ABSOLUTE));
+			wordListPerPage = new TreeSet<WordBlock>(
+					new SpatialOrdering(SpatialOrdering.MIXED_MODE)
+					);
 		else {
 			wordListPerPage.clear();
 		}
 
+		int lastY = -1;
+		int lastX = -1;
+
+		int i = 0;
 		while (wordIterator.hasNext()) {
 			
 			currentWord = wordIterator.next();
@@ -199,17 +211,39 @@ public class JPedalExtractor implements Extractor {
 			
 			currentWord = Strip.convertToText(currentWord, true);
 			
-			int wx1 = roundUp(Float.parseFloat((wordIterator.next() + "")));
-			int wy1 = roundUp(Float.parseFloat((wordIterator.next() + "")));
-			int wx2 = roundUp(Float.parseFloat((wordIterator.next() + "")));
-			int wy2 = roundUp(Float.parseFloat((wordIterator.next() + "")));
+			int wx1 = (int) Math.floor(Float.parseFloat((wordIterator.next() + "")));
+			int wy1 = (int) Math.floor(Float.parseFloat((wordIterator.next() + "")));
+			int wx2 = (int) Math.floor(Float.parseFloat((wordIterator.next() + "")));
+			int wy2 = (int) Math.floor(Float.parseFloat((wordIterator.next() + "")));
 
 			wy1 = dimensions[1] - wy1;
 			wy2 = dimensions[1] - wy2;
 			
-			WordBlock wordBlock = modelFactory.createWordBlock(wx1, wy1, wx2,
-					wy2, 1, font, style, currentWord);
-
+			int h = wy2-wy1;
+			this.avgHeightFrequencyCounter.add(h);
+			
+			//
+			// if these words are on the same line, gather statistics about the 
+			// spaces between words
+			//
+			if( lastY == wy2 ) {
+				IntegerFrequencyCounter sfc = null;
+				if(spaceFrequencyCounterMap.containsKey(h)){
+					sfc = this.spaceFrequencyCounterMap.get(h);
+				} else {
+					sfc = new IntegerFrequencyCounter(1);
+					this.spaceFrequencyCounterMap.put(h,sfc);									
+				}
+				sfc.add(wx1 - lastX);				
+			}
+			
+			lastX = wx2;
+			lastY = wy2;
+			
+			WordBlock wordBlock = modelFactory.createWordBlock(
+					wx1, wy1, wx2, wy2, 
+					1, font, style, currentWord, i);
+			
 			if( font == null || style == null ) {
 				logger.debug("Minor font error for word on pg." + this.currentPage + 
 						" in '" + this.currentFile.getName() + "', info:" + 
@@ -217,6 +251,7 @@ public class JPedalExtractor implements Extractor {
 			}
 			
 			wordListPerPage.add(wordBlock);
+			i++;
 
 		}
 		
@@ -268,21 +303,28 @@ public class JPedalExtractor implements Extractor {
 
 	@Override
 	public int getCurrentPageBoxHeight() {
-
 		return pageHeight;
 	}
 
 	@Override
 	public int getCurrentPageBoxWidth() {
-
 		return pageWidth;
 	}
 
-	private int roundUp(double value) {
-		
-		value = Math.floor(value);
-
-		return (int) value;
+	@Override
+	public IntegerFrequencyCounter getAvgHeightFrequencyCounter() {
+		return this.avgHeightFrequencyCounter;
 	}
 
+	@Override
+	// TODO Not yet built this.
+	public FrequencyCounter getFontFrequencyCounter() {
+		return null;
+	}
+
+	@Override
+	public IntegerFrequencyCounter getSpaceFrequencyCounter(int height) {
+		return this.spaceFrequencyCounterMap.get(height);
+	}
+	
 }

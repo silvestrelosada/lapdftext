@@ -122,7 +122,7 @@ public class OpenAccessXMLWriter implements XMLWriter {
 			ArrayList<ChunkBlock> chunkList) {
 
 		Collections.sort(chunkList, new SpatialOrdering(
-				SpatialOrdering.PAGE_COLUMN_AWARE_MIXED_MODE));
+				SpatialOrdering.MIXED_MODE));
 		ArrayList<ChunkBlock> headingList = new ArrayList<ChunkBlock>();
 		String lastEncounteredType = "";
 
@@ -259,7 +259,7 @@ public class OpenAccessXMLWriter implements XMLWriter {
 		}
 		if (list != null && list.size() > 0) {
 			Collections.sort(list, new SpatialOrdering(
-					SpatialOrdering.PAGE_COLUMN_AWARE_MIXED_MODE));
+					SpatialOrdering.MIXED_MODE));
 			try {
 				documentContentHandler.startElement("", "", element,
 						emptyAttribute);
@@ -329,7 +329,7 @@ public class OpenAccessXMLWriter implements XMLWriter {
 		for (int i = 1; i <= totalNumberOfPages; i++) {
 			page = document.getPage(i);
 
-			chunks = page.getAllChunkBlocks(SpatialOrdering.COLUMN_AWARE_MIXED_MODE);
+			chunks = page.getAllChunkBlocks(SpatialOrdering.MIXED_MODE);
 			for (ChunkBlock chunk : chunks) {
 				String type = (chunk.getType().contains(".")) ? chunk.getType()
 						.substring(0, chunk.getType().indexOf(".")) : chunk

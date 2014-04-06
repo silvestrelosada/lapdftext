@@ -87,7 +87,7 @@ public class SpatialXMLWriter implements XMLWriter {
 				documentContentHandler.startElement("", "", ELEMENT_NAME_PAGE,
 						pageAttribute);
 				chunks = page
-						.getAllChunkBlocks(SpatialOrdering.COLUMN_AWARE_MIXED_MODE);
+						.getAllChunkBlocks(SpatialOrdering.MIXED_MODE);
 				for (ChunkBlock chunk : chunks) {
 					chunkAttribute.clear();
 					chunkAttribute.addAttribute("", "", BLOCK_ATTRIBUTE_X1,

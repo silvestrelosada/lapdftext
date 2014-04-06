@@ -98,13 +98,13 @@ public class PageImageOutlineRenderer {
 		drawWord(width / 2 - 50, 10, image, Color.black,
 				label + ":" + page.getPageNumber(), 10);
 
-		List<ChunkBlock> cbList = page.getAllChunkBlocks(SpatialOrdering.COLUMN_AWARE_MIXED_MODE);
+		List<ChunkBlock> cbList = page.getAllChunkBlocks(SpatialOrdering.MIXED_MODE);
 		List<Block> list = new ArrayList<Block>(cbList);
 		
 		// renderBlockPerImage(list, image, fileName);
 		renderBlocksByWordOrder(list, image);
 
-		List<WordBlock> wbList = page.getAllWordBlocks(SpatialOrdering.COLUMN_AWARE_MIXED_MODE);
+		List<WordBlock> wbList = page.getAllWordBlocks(SpatialOrdering.MIXED_MODE);
 		list = new ArrayList<Block>(wbList);
 		renderBlocksByWordOrder(list, image);
 
@@ -134,7 +134,7 @@ public class PageImageOutlineRenderer {
 		drawWord(width / 2 - 50, 10, image, Color.black,
 				label + ":" + page.getPageNumber(), 10);
 
-		List<ChunkBlock> cbList = page.getAllChunkBlocks(SpatialOrdering.COLUMN_AWARE_MIXED_MODE);
+		List<ChunkBlock> cbList = page.getAllChunkBlocks(SpatialOrdering.MIXED_MODE);
 		List<Block> list = new ArrayList<Block>(cbList);
 		
 		renderChunksByType(list, image);
@@ -226,37 +226,40 @@ public class PageImageOutlineRenderer {
 
 					
 					WordBlock[] wFlushArray = w.getFlushArray();
-					WordBlock lu = wFlushArray[0];
-					WordBlock ru = wFlushArray[1];
-					WordBlock ld = wFlushArray[2];
-					WordBlock rd = wFlushArray[3];
+					if( wFlushArray != null ) {
+						WordBlock lu = wFlushArray[0];
+						WordBlock ru = wFlushArray[1];
+						WordBlock ld = wFlushArray[2];
+						WordBlock rd = wFlushArray[3];
+						
+						if( lu != null )
+							drawLine( w.getX1(), centroidY, 
+									w.getX1(), w.getY1(),
+									1, image, Color.green);
 					
-					if( lu != null )
-						drawLine( w.getX1(), centroidY, 
-								w.getX1(), w.getY1(),
-								1, image, Color.green);
-				
-					if( ru != null )
-						drawLine( w.getX2(), centroidY, 
-								w.getX2(), w.getY1(),
-								1, image, Color.green);
-
-					if( ld != null )
-						drawLine( w.getX1(), centroidY, 
-								w.getX1(), w.getY2(),
-								1, image, Color.green);
-
-					if( rd != null)
-						drawLine( w.getX2(), centroidY, 
-								w.getX2(), w.getY2(),
-								1, image, Color.green);
-
+						if( ru != null )
+							drawLine( w.getX2(), centroidY, 
+									w.getX2(), w.getY1(),
+									1, image, Color.green);
+	
+						if( ld != null )
+							drawLine( w.getX1(), centroidY, 
+									w.getX1(), w.getY2(),
+									1, image, Color.green);
+	
+						if( rd != null)
+							drawLine( w.getX2(), centroidY, 
+									w.getX2(), w.getY2(),
+									1, image, Color.green);
+					}
+					
 					drawWord( centroidX, 
 							centroidY + 4, 
 							image, 
 							Color.red,
 							String.format("%d", w.getOrderAddedToChunk()), 
 							8);
+				
 				}
 
 			}

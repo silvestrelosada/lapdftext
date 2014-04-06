@@ -1,27 +1,23 @@
 package edu.isi.bmkeg.lapdf.model.RTree;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import com.infomatiq.jsi.Point;
 import com.infomatiq.jsi.Rectangle;
 import com.infomatiq.jsi.rtree.RTree;
 
-import edu.isi.bmkeg.lapdf.extraction.exceptions.InvalidPopularSpaceValueException;
-import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.WordBlock;
 import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
-import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialContainer;
+import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
 import edu.isi.bmkeg.utils.IntegerFrequencyCounter;
 
 public abstract class RTSpatialContainer implements SpatialContainer {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int mostPopularHorizontalSpaceBetweenWords = -100;
 	private int mostPopularWordWidth = -100;
 	private int mostPopularVerticalSpaceBetweenWords = -100;
@@ -136,7 +132,6 @@ public abstract class RTSpatialContainer implements SpatialContainer {
 					ordering, classType);
 			List<SpatialEntity> returnList = new ArrayList<SpatialEntity>();
 			for (SpatialEntity loopEntity : intersectList) {
-
 				if (entity.getX1() <= loopEntity.getX1()
 						&& entity.getX2() >= loopEntity.getX2()
 						&& entity.getY1() <= loopEntity.getY1()
@@ -156,8 +151,8 @@ public abstract class RTSpatialContainer implements SpatialContainer {
 			return mostPopularHorizontalSpaceBetweenWords;
 		}
 		
-		IntegerFrequencyCounter avgHorizontalSpaceBetweenWordFrequencyCounter = new IntegerFrequencyCounter(
-				1);
+		IntegerFrequencyCounter avgHorizontalSpaceBetweenWordFrequencyCounter = 
+				new IntegerFrequencyCounter(1);
 		if (list == null)
 			list = this.getAllWordBlocks(SpatialOrdering.MIXED_MODE);
 		int lastX2 = list.get(0).getX2();

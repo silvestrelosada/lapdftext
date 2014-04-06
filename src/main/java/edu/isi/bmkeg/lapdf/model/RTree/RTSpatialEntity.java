@@ -11,14 +11,17 @@ import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
 public class RTSpatialEntity extends Rectangle implements SpatialEntity {
 	
 	private int id;
+	
+	private int order;
    
 	public RTSpatialEntity() {
 		super();
 	}
 	
-	public RTSpatialEntity(float x1, float y1, float x2, float y2) {
+	public RTSpatialEntity(float x1, float y1, float x2, float y2, int order) {
 	
 		super(x1, y1, x2, y2);
+		this.order = order;
 	
 	}
 
@@ -36,20 +39,31 @@ public class RTSpatialEntity extends Rectangle implements SpatialEntity {
 		return new RTSpatialEntity(rectangle);
 
 	}
+	
+	@Override
+	public void add(SpatialEntity entity) {
+
+		RTSpatialEntity rtEntity = (RTSpatialEntity) entity;
+		super.add(rtEntity);
+
+	}
+
 
 	@Override
 	public int getId() {
-
 		return id;
-	
 	}
 
 	@Override
 	public void setId(int id) {
-
-		this.id = id;
-	
+		this.id = id;	
 	}
+	
+	@Override
+	public int getOrder() {
+		return this.order;
+	}
+
 
 	@Override
 	public void resize( int X1, int Y1, int width, int height) {		
@@ -126,7 +140,8 @@ public class RTSpatialEntity extends Rectangle implements SpatialEntity {
 				(int) intersectingAWTRectangle2.getMinX(),
 				(int) intersectingAWTRectangle2.getMinY(),
 				(int) intersectingAWTRectangle2.getMaxX(),
-				(int) intersectingAWTRectangle2.getMaxY()
+				(int) intersectingAWTRectangle2.getMaxY(),
+				0
 				);
 		
 		return se;

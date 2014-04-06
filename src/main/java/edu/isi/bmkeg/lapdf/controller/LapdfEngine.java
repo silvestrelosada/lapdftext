@@ -67,7 +67,6 @@ public class LapdfEngine  {
 	private boolean imgFlag = false;
 	
 	private JPedalPDFRenderer imagifier = new JPedalPDFRenderer();
-	
 
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -75,9 +74,7 @@ public class LapdfEngine  {
 			throws Exception {
 
 		this.parser = new RuleBasedParser(new RTModelFactory());
-		File rf = Converters.extractFileFromJarClasspath("rules/general.drl");
-		this.setRuleFile(rf);
-
+		
 	}
 
 	public LapdfEngine(File ruleFile) 
@@ -334,7 +331,7 @@ public class LapdfEngine  {
 					IOException, URISyntaxException {
 		
 		File f = Converters
-				.extractFileFromJarClasspath("rules/general.drl");
+				.extractFileFromJarClasspath(".", "rules/general.drl");
 		
 		this.classifyDocument(document, f);
 		
@@ -362,7 +359,7 @@ public class LapdfEngine  {
 			PageBlock page = document.getPage(i);
 			
 			List<ChunkBlock> chunkList = page.getAllChunkBlocks(
-					SpatialOrdering.COLUMN_AWARE_MIXED_MODE);
+					SpatialOrdering.MIXED_MODE);
 
 			classfier.classify(chunkList);
 
@@ -476,7 +473,7 @@ public class LapdfEngine  {
 			PageBlock page = document.getPage(i);
 			
 			List<ChunkBlock> chunksPerPage = page.getAllChunkBlocks(
-					SpatialOrdering.PAGE_COLUMN_AWARE_MIXED_MODE
+					SpatialOrdering.MIXED_MODE
 					);
 			
 			for(ChunkBlock chunkBlock:chunksPerPage){
@@ -804,7 +801,7 @@ public class LapdfEngine  {
 			PageBlock page = doc.getPage(i);
 			
 			List<ChunkBlock> blocks = page.getAllChunkBlocks(
-					SpatialOrdering.PAGE_COLUMN_AWARE_MIXED_MODE );
+					SpatialOrdering.MIXED_MODE );
 			
 			for( int j=0; j<blocks.size(); j++) {
 				ChunkBlock b = blocks.get(j);

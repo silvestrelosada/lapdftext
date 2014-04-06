@@ -24,7 +24,8 @@ public class ImagifyBlocksTest extends TestCase
 	protected void setUp() throws Exception
 	{ 
 				
-		URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8");
+		URL u = this.getClass().getClassLoader().getResource("sampleData/21593200.pdf");
+		//URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8");
 		inputDir = new File( u.getPath() );
 		outputDir = new File( inputDir.getParentFile().getPath() + "/temp/output" );
 				

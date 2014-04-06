@@ -17,11 +17,13 @@ import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
 
 public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 
+	private static final long serialVersionUID = 1L;
+
 	private Block container;
 	private int mostPopularWordHeight;
 	private int mostPopularWordSpaceWidth;
-	private String mostPopularWordFont;
-	private String mostPopularWordStyle;
+	private String mostPopularWordFont = "";
+	private String mostPopularWordStyle = "";
 	
 	private String alignment = null;
 	private String type = ChunkBlock.TYPE_UNCLASSIFIED;
@@ -35,8 +37,8 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 		super();
 	}
 
-	public RTChunkBlock(int x1, int y1, int x2,int y2) {
-		super(x1, y1, x2, y2);
+	public RTChunkBlock(int x1, int y1, int x2, int y2, int order) {
+		super(x1, y1, x2, y2, order);
 	}
 	
 	@Override
@@ -262,10 +264,10 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 		
 		List<ChunkBlock> sortedChunkBlockList = ((PageBlock) this
 				.getContainer())
-				.getAllChunkBlocks(SpatialOrdering.COLUMN_AWARE_MIXED_MODE);
+				.getAllChunkBlocks(SpatialOrdering.MIXED_MODE);
 
 		int index = Collections.binarySearch(sortedChunkBlockList, this,
-				new SpatialOrdering(SpatialOrdering.COLUMN_AWARE_MIXED_MODE));
+				new SpatialOrdering(SpatialOrdering.MIXED_MODE));
 
 		return (index <= 0) ? null : sortedChunkBlockList.get(index - 1);
 	}
@@ -368,7 +370,7 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 		}
 
 		SpatialEntity entity = new RTChunkBlock(topX, topY, topX
-				+ width, topY + height);
+				+ width, topY + height, -1);
 
 		List<ChunkBlock> l = new ArrayList<ChunkBlock>();		
 		 Iterator<SpatialEntity> it = parent.intersectsByType(

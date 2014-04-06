@@ -16,6 +16,8 @@ public class LapdftextXMLWord extends LapdftextXMLRectangle implements Serializa
 
 	private int sId;
 
+	private int order;
+
 	@XmlAttribute	
 	public String getT() {
 		return t;
@@ -43,6 +45,13 @@ public class LapdftextXMLWord extends LapdftextXMLRectangle implements Serializa
 		this.sId = sId;
 	}
 
+	@XmlAttribute	
+	public int getOrder() {
+		return order;
+	}
 
+	public void setOrder(int order) {
+		this.order = order;
+	}
 	
 }

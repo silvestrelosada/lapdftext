@@ -74,7 +74,7 @@ public class ImagifySections {
 		}
 		
 		if( ruleFilePath.equals( "-" ) ) {
-			ruleFile = Converters.extractFileFromJarClasspath("rules/general.drl");
+			ruleFile = Converters.extractFileFromJarClasspath(".", "rules/general.drl");
 		} else {
 			ruleFile = new File( ruleFilePath );
 		}

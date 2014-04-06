@@ -21,7 +21,7 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 	private String font;
 	private String fontStyle;
 	private String word;
-
+	
 	private int spaceWidth;
 	
 	private Block container;
@@ -32,11 +32,12 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 	private WordBlock[] flushArray; 
 
 	public RTWordBlock(int x1, int y1, int x2, int y2, int spaceWidth,
-			String font, String fontStyle, String word) {
-		super(x1, y1, x2, y2);
+			String font, String fontStyle, String word, int order) {
+		
+		super(x1, y1, x2, y2, order);
 		this.font = font;
 		this.fontStyle = fontStyle;
-
+		
 		if( word != null ) {
 			try {
 				this.word = UnicodeFormatter.fixEncoding(word);						
@@ -195,13 +196,13 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 	}
 	
 	@Override
-	public List<WordBlock> readNearbyWords(int dx, int dy) {
+	public List<WordBlock> readNearbyWords(int left, int right, int up, int down) {
 
 		// expand the current word.
-		int topX = this.getX1() - dx;
-		int topY = this.getY1() - dy;
-		int bottomX = this.getX2() + dx;
-		int bottomY = this.getY2() + dy;
+		int topX = this.getX1() - left;
+		int topY = this.getY1() - up;
+		int bottomX = this.getX2() + right;
+		int bottomY = this.getY2() + down;
 
 		return readWordsInBounds(topX, topY, bottomX, bottomY);
 	
@@ -213,7 +214,7 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 		
 		SpatialEntity expandedWord = new RTWordBlock(
 				x1, y1, x2, y2, 
-				0, null, null, null);
+				0, null, null, null, -1);
 		
 		// find all overlapping words
 		TreeSet<SpatialEntity> spatiallyDefinedNeighbors = new TreeSet<SpatialEntity>(
@@ -248,7 +249,7 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 		
 		int dWest = 1000, dEast = 1000, dNorth = 1000, dSouth = 1000;
 		
-		List<WordBlock> proximalWords = this.readNearbyWords(dx, dy);
+		List<WordBlock> proximalWords = this.readNearbyWords(dx, dx, dy, dy);
 		
 		for( WordBlock w : proximalWords ) {
 			
@@ -412,7 +413,6 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 
 		return this.flushArray;
 		
-	}	
-	
+	}
 
 }

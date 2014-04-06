@@ -14,6 +14,7 @@ public class LapdftextXMLRectangle implements Serializable {
 	private int h;
 	private int x;
 	private int y;
+	private int i;
 
 	public LapdftextXMLRectangle() {}
 
@@ -67,6 +68,15 @@ public class LapdftextXMLRectangle implements Serializable {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	@XmlAttribute
+	public int getI() {
+		return i;
+	}
+
+	public void setI(int i) {
+		this.i = i;
 	}	
 	
 

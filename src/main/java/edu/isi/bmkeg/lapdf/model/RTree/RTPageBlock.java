@@ -16,6 +16,8 @@ import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
 
 public class RTPageBlock extends RTSpatialContainer implements PageBlock {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private int pageNumber;
 	private int boxHeight;
 	private int boxWidth;
@@ -68,7 +70,7 @@ public class RTPageBlock extends RTSpatialContainer implements PageBlock {
 	public int getPageNumber() {
 		return pageNumber;
 	}
-
+	
 	@Override
 	public String readLeftRightMidLine() {
 		return null;
@@ -177,14 +179,15 @@ public class RTPageBlock extends RTSpatialContainer implements PageBlock {
 	
 	@Override
 	public List<WordBlock> getAllWordBlocks(String ordering) {
+		
 		List<WordBlock> list = new ArrayList<WordBlock>(
 				indexToWordBlockMap.values());
-		if (ordering != null) {
+		
+		if (ordering != null) {			
 			Collections.sort(list, new SpatialOrdering(ordering));
 		}
 
 		return list;
 	}
-
 
 }

@@ -39,7 +39,7 @@ public class SpatiallyOrderedChunkTypeFilteredTextWriter implements TextWriter
 		for (int i = 1; i <= totalNumberOfPages; i++)
 		{
 			page = document.getPage(i);
-			List<ChunkBlock> chunksPerPage = page.getAllChunkBlocks(SpatialOrdering.PAGE_COLUMN_AWARE_MIXED_MODE);
+			List<ChunkBlock> chunksPerPage = page.getAllChunkBlocks(SpatialOrdering.MIXED_MODE);
 			for(ChunkBlock chunkBlock:chunksPerPage){
 				if(chunkBlock.getType().equals(ChunkBlock.TYPE_ABSTRACT_HEADING)||chunkBlock.getType().equals(ChunkBlock.TYPE_ABSTRACT_BODY)||chunkBlock.getType().equals(ChunkBlock.TYPE_INTRODUCTION_HEADING)||chunkBlock.getType().equals(ChunkBlock.TYPE_INTRODUCTION_BODY)){
 					startRecording = true;

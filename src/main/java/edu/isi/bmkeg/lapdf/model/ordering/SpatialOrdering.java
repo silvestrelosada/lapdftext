@@ -10,6 +10,7 @@ import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
 
 public class SpatialOrdering implements Comparator<SpatialEntity> {
 
+	public static final String ORIGINAL_MODE = "original";
 	public static final String HORIZONTAL_MODE = "horizontal";
 	public static final String VERTICAL_MODE = "vertical";
 	public static final String MIXED_MODE = "mixed";
@@ -27,7 +28,12 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 
 		int code = 0;
 		
-		if (HORIZONTAL_MODE.equalsIgnoreCase(mode)) {
+		if (ORIGINAL_MODE.equalsIgnoreCase(mode)) {
+			
+			code = originalOrdering(o1, o2);
+		
+		} 
+		else if (HORIZONTAL_MODE.equalsIgnoreCase(mode)) {
 		
 			code = horizontalOrdering(o1, o2);
 		
@@ -66,7 +72,13 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 		return code;
 
 	}
-
+	
+	private int originalOrdering(SpatialEntity o1, SpatialEntity o2) {
+		
+		return o1.getOrder() - o2.getOrder();
+	
+	}
+	
 	private int camdOrdering(SpatialEntity o1, SpatialEntity o2) {
 
 		String o1Alignment = ((Block) o1).readLeftRightMidLine();
@@ -88,19 +100,6 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 		int o1y1 = o1.getY1();
 		int o2y1 = o2.getY1();
 		int pageHeight = pgB.getPageBoxHeight();
-
-		if (pageNumber == 1 && Math.abs(o1y1 - o2y1) >= .5 * pageHeight) {
-			
-			return mixedOrdering(o1, o2);
-		
-		} 
-		
-		if (o1 instanceof ChunkBlock && 
-				executeHeaderFooterCheck((ChunkBlock) o1, (ChunkBlock) o2)) {
-		
-			return mixedOrdering(o1, o2);
-		
-		}
 
 		if (o1Alignment.equals(o2Alignment)) {
 
@@ -138,22 +137,33 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 
 	private int horizontalOrdering(SpatialEntity o1, SpatialEntity o2) {
 
-		int x1Diff = o1.getX1() - o2.getX1();
+		Block b1 = (Block) o1;
+		int p1 = b1.getPage().getPageNumber();
 		
-		if (x1Diff == 0)
-			return o1.getX2() - o2.getX2();
+		Block b2 = (Block) o2;
+		int p2 = b2.getPage().getPageNumber();
 		
-		return x1Diff;
+		if( p1 != p2 )
+			return p1 - p2;
+
+		return o1.getX1() - o2.getX1();
 	
 	}
 
 	private int verticalOrdering(SpatialEntity o1, SpatialEntity o2) {
 	
-		Block block = (Block) o1;
+		Block b1 = (Block) o1;
+		int p1 = b1.getPage().getPageNumber();
 		
-		PageBlock page = block.getPage();
+		Block b2 = (Block) o2;
+		int p2 = b2.getPage().getPageNumber();
+		
+		if( p1 != p2 )
+			return p1 - p2;
 		
 		int y1Diff = o1.getY1() - o2.getY1();
+		
+		/*
 		
 		// Superscripts and subscripts
 		if ( Math.abs(y1Diff) < page.getMostPopularWordHeightPage()/2 ) {
@@ -166,7 +176,7 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 				return y2Diff;
 			}
 			
-		}
+		}*/
 			
 		return y1Diff;
 
@@ -181,9 +191,12 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 					- o2.getY2();
 		return y1Diff;
 	}
+	
 	/**
-	 * Note: in order to implement the fix for the superscript subscript induced bug (fix implemented by Abhishek November 10th)
+	 * Note: in order to implement the fix for the superscript subscript induced bug 
+	 * (fix implemented by Abhishek November 10th)
 	 * replace the return mixedOrderingAbsolute with other commented code. 
+	 * 
 	 * @param o1
 	 * @param o2
 	 * @return
@@ -275,9 +288,4 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 
 	}
 
-	public static void main(String argsd[]) {
-		Boolean value = null;
-		if (value != null)
-			System.out.println("bklusd");
-	}
 }

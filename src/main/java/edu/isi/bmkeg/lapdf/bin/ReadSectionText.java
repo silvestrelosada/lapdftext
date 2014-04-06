@@ -81,7 +81,7 @@ public class ReadSectionText {
 
 		if (ruleFilePath.equals("-")) {
 			ruleFile = Converters
-					.extractFileFromJarClasspath("rules/general.drl");
+					.extractFileFromJarClasspath(".", "rules/general.drl");
 		} else {
 			ruleFile = new File(ruleFilePath);
 		}

@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import com.infomatiq.jsi.Rectangle;
+
 import edu.isi.bmkeg.lapdf.extraction.JPedalExtractor;
 import edu.isi.bmkeg.lapdf.extraction.exceptions.InvalidPopularSpaceValueException;
 import edu.isi.bmkeg.lapdf.features.HorizontalSplitFeature;
@@ -24,6 +26,7 @@ import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
 import edu.isi.bmkeg.lapdf.model.PageBlock;
 import edu.isi.bmkeg.lapdf.model.WordBlock;
+import edu.isi.bmkeg.lapdf.model.RTree.RTModelFactory;
 import edu.isi.bmkeg.lapdf.model.factory.AbstractModelFactory;
 import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
@@ -56,7 +59,9 @@ public class RuleBasedParser implements Parser {
 	private int northSouthSpacing;
 	
 	private int eastWestSpacing;
-	
+
+	private boolean quickly = false;
+
 	protected AbstractModelFactory modelFactory;
 	
 	protected String path;
@@ -156,7 +161,13 @@ public class RuleBasedParser implements Parser {
 			this.northSouthSpacing = (pageBlock.getMostPopularWordHeightPage() ) / 2
 					+ pageBlock.getMostPopularVerticalSpaceBetweenWordsPage();
 
-			buildChunkBlocks(pageWordBlockList, pageBlock);
+			if( this.quickly ) {
+				buildChunkBlocksQuickly(pageWordBlockList, pageBlock);
+			} else {
+				buildChunkBlocksSlowly(pageWordBlockList, pageBlock);				
+			}
+
+			//deleteHighlyOverlappedChunkBlocks(pageBlock);
 			
 			if (isDebugImages()) {
 				PageImageOutlineRenderer.dumpChunkTypePageImageToFile(
@@ -303,7 +314,7 @@ public class RuleBasedParser implements Parser {
 					int y2 = xmlWord.getY() + xmlWord.getH();
 										
 					WordBlock wordBlock = modelFactory.createWordBlock(x1, y1, x2,
-							y2, 1, font, "", xmlWord.getT() );
+							y2, 1, font, "", xmlWord.getT(), xmlWord.getI() );
 					chunkWords.add(wordBlock);
 
 					pageBlock.add(wordBlock, xmlWord.getId());
@@ -333,49 +344,16 @@ public class RuleBasedParser implements Parser {
 			
 			pageCounter++;
 			
-		}
+		}	
 		
-		
-		//
-		// Calling 'hasNext()' get the text from JPedal.
-		// 
-		/*while (pageExtractor.hasNext()) {
-			
-			
-			pageWordBlockList = pageExtractor.next();
-
-			idGenerator = pageBlock.initialize(pageWordBlockList, idGenerator);
-
-			this.eastWestSpacing = (pageBlock.getMostPopularWordHeightPage()) / 2
-					+ pageBlock.getMostPopularHorizontalSpaceBetweenWordsPage();
-						
-			this.northSouthSpacing = (pageBlock.getMostPopularWordHeightPage() ) / 2
-					+ pageBlock.getMostPopularVerticalSpaceBetweenWordsPage();
-
-			buildChunkBlocks(pageWordBlockList, pageBlock);
-			
-			if (isDebugImages()) {
-				PageImageOutlineRenderer.dumpChunkTypePageImageToFile(
-						pageBlock,
-						new File(pth + "/_01_afterBuildBlocks" + pageBlock.getPageNumber() + ".png"),
-						file.getName() + "afterBuildBlocks"
-								+ pageBlock.getPageNumber() + ".png");
-			}
-
-		}*/
-
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		
-		if (!document.hasjPedalDecodeFailed()) {
-
-			document.addPages(pageList);
-
-			document.calculateBodyTextFrame();
-			document.calculateMostPopularFontStyles();
-
-		}
+		document.addPages(pageList);
+		document.calculateBodyTextFrame();
+		document.calculateMostPopularFontStyles();
 
 		return document;
+		
 	}	
 	
 	private void init(File file) throws Exception {
@@ -390,7 +368,91 @@ public class RuleBasedParser implements Parser {
 
 	}	
 	
-	private void buildChunkBlocks(List<WordBlock> wordBlocksLeftInPage,
+	
+	/**
+	 * Here we build the blocks based on speed, assuming the ordering of words on the page is 
+	 * in the correct reading order. Thus we start a new block when you move to a new line 
+	 * with a is if the next line 
+	 * starts with a different width and a different 
+	 * @param wordBlocksLeftInPage
+	 * @param page
+	 */
+	private void buildChunkBlocksQuickly(List<WordBlock> wordBlocksLeftInPage,
+			PageBlock page) {
+		
+		List<WordBlock> chunkWords = new ArrayList<WordBlock>();
+		List<ChunkBlock> chunkBlockList1 = new ArrayList<ChunkBlock>();
+
+		int minX = 1000, maxX = 0, minY = 1000, maxY = 0;
+		WordBlock prev = null;
+		
+		for( WordBlock word : wordBlocksLeftInPage ) {			
+
+			// add this word's height and font to the counts.
+			page.getDocument().getAvgHeightFrequencyCounter().add(
+					word.getHeight());
+			page.getDocument().getFontFrequencyCounter().add(
+					word.getFont() + ";" + word.getFontStyle() );
+			
+			// Is this a new line or 
+			// a very widely separated block on the same line?
+			if( prev != null && 
+					(word.getY2() > maxY || 
+					word.getX1() - maxX > word.getHeight() * 1.5)
+					) {
+				
+				// 1. Is this new line more than 
+				//    0.75 x word.getHeight() 
+				//    from the chunk so far?
+				boolean lineSeparation = word.getY1() - maxY > word.getHeight() * 0.75;
+				
+				// 2. Is this new line a different font
+				//    or a different font size than the 
+				//    chunk so far?
+				boolean newFont = (word.getFont() != null && !word.getFont().equals(prev.getFont()));
+				boolean newStyle = (word.getFont() != null && !word.getFontStyle().equals(prev.getFontStyle()));
+						
+				// 3. Is this new line outside the 
+				//    existing minX...maxX limit?
+				boolean outsideX = word.getX1() < minX || word.getX2() > maxX;
+				
+				if(  lineSeparation || newFont || newStyle || outsideX ) {
+				
+					ChunkBlock cb1 = buildChunkBlock(chunkWords, page);
+					chunkBlockList1.add(cb1);
+					chunkWords = new ArrayList<WordBlock>();
+					
+					minX = 1000;
+					maxX = 0;
+					minY = 1000;
+					maxY = 0;
+					prev = null;
+					
+				}
+				
+			}
+			
+			chunkWords.add(word);
+			word.setOrderAddedToChunk(chunkWords.size());
+			
+			prev = word;
+			if( word.getX1() < minX) minX = word.getX1();
+			if( word.getX2() > maxX) maxX = word.getX2();
+			if( word.getY1() < minY) minY = word.getY1();
+			if( word.getY2() > maxY) maxY = word.getY2();
+						
+		}
+		
+		ChunkBlock cb1 = buildChunkBlock(chunkWords, page);
+		chunkBlockList1.add(cb1);
+
+		idGenerator = page.addAll(new ArrayList<SpatialEntity>(
+				chunkBlockList1), idGenerator);
+		
+	}
+	
+	
+	private void buildChunkBlocksSlowly(List<WordBlock> wordBlocksLeftInPage,
 			PageBlock page) {
 
 		LinkedBlockingQueue<WordBlock> wordBlocksLeftToCheckInChunk = 
@@ -400,9 +462,10 @@ public class RuleBasedParser implements Parser {
 		List<WordBlock> rotatedWords = new ArrayList<WordBlock>();
 		int counter;
 		List<ChunkBlock> chunkBlockList1 = new ArrayList<ChunkBlock>();
-
+		
 		while (wordBlocksLeftInPage.size() > 0) {
 			
+			int minX = 1000, maxX = 0, minY = 1000, maxY = 0;
 			wordBlocksLeftToCheckInChunk.clear();
 			
 			// Start off with this word block
@@ -439,13 +502,17 @@ public class RuleBasedParser implements Parser {
 				// remove this word from the global search
 				wordBlocksLeftInPage.remove(word);
 
+				// heuristic to correct missing blocking errors for large fonts
+				int eastWest = (int) Math.ceil(word.getHeight() * 0.75);
+				int northSouth = (int) Math.ceil(word.getHeight() * 0.85);
+				
 				// what other words on the page are close to this word 
 				// and are still in the block?				
 				List<WordBlock> wordsToAddThisIteration = word.readNearbyWords(
-						this.eastWestSpacing, this.northSouthSpacing);				
-					
+						eastWest, eastWest, northSouth, northSouth);				
+	
 				// TODO how to add more precise word features without
-				word.writeFlushArray(wordsToAddThisIteration);
+				//word.writeFlushArray(wordsToAddThisIteration);
 				
 				wordsToAddThisIteration.retainAll(wordBlocksLeftInPage);
 				
@@ -459,22 +526,20 @@ public class RuleBasedParser implements Parser {
 				// TODO Add criteria here to improve blocking by 
 				// dropping newly found words that should be excluded.
 				//
-				//List<WordBlock> wordsToKill = new ArrayList<WordBlock>();
-				/*for( WordBlock w : wordsToAddThisIteration) {
+				List<WordBlock> wordsToKill = new ArrayList<WordBlock>();
+				for( WordBlock w : wordsToAddThisIteration) {
 
-					// or they are a different height from the height 
-					// of the first word in this chunk +/- 1px.
-					if( w.getHeight() > chunkTextHeight + 1 ||
-							w.getHeight() < chunkTextHeight - 1 ) {
-					//	wordsToKill.add(w);
+					// They are a different height from the height 
+					// of the first word in this chunk +/- 1px 
+					// (and outside the current line for the chunk)
+					if( (w.getHeight() > chunkTextHeight + 1 ||
+							w.getHeight() < chunkTextHeight - 1) &&
+							(w.getY1() < minY || w.getY2() > maxY) ) {
+						wordsToKill.add(w);
 					}
 
-					// or does adding this word to the chunk to the existing rectangle 
-					// significantly causes the word density to drop beyond that of 
-					// adding a new row (or column) to the block? 
-
 				}
-				wordsToAddThisIteration.removeAll(wordsToKill);*/
+				wordsToAddThisIteration.removeAll(wordsToKill);
 				
 				// At this point, these words will be added to this chunk.
 				wordBlocksLeftToCheckInChunk.addAll(wordsToAddThisIteration);
@@ -483,6 +548,12 @@ public class RuleBasedParser implements Parser {
 				WordBlock wb = wordBlocksLeftToCheckInChunk.poll();
 				chunkWords.add(wb);					
 				wb.setOrderAddedToChunk(chunkWords.size());
+				
+				if( wb.getX1() < minX) minX = wb.getX1();
+				if( wb.getX2() > maxX) maxX = wb.getX2();
+				if( wb.getY1() < minY) minY = wb.getY1();
+				if( wb.getY2() > maxY) maxY = wb.getY2();
+				
 			}
 
 			wordBlocksLeftInPage.removeAll(chunkWords);
@@ -657,7 +728,7 @@ public class RuleBasedParser implements Parser {
 		SpatialEntity entity = modelFactory.createWordBlock(
 				leftChunkBlock.getX2() + 1, leftChunkBlock.getY1(),
 				rightChunkBlock.getX1() - 1, rightChunkBlock.getY2(), 0, null,
-				null, null);
+				null, null, -1);
 		if (parent.intersectsByType(entity, null, WordBlock.class).size() >= 1) {
 			if (block == null) {
 				logger.info("null null");
@@ -694,14 +765,23 @@ public class RuleBasedParser implements Parser {
 			spaceFrequencyCounter.add(wordBlock.getSpaceWidth());
 
 			avgHeightFrequencyCounter.add(wordBlock.getHeight());
-			fontFrequencyCounter.add(wordBlock.getFont());
-			styleFrequencyCounter.add(wordBlock.getFontStyle());
+			
+			if( wordBlock.getFont() != null ) {
+				fontFrequencyCounter.add(wordBlock.getFont());
+			} else {
+				fontFrequencyCounter.add("");				
+			}
+			if( wordBlock.getFont() != null ) {
+				styleFrequencyCounter.add(wordBlock.getFontStyle());
+			} else {
+				styleFrequencyCounter.add("");			
+			}
 			
 			if (chunkBlock == null) {
 
 				chunkBlock = modelFactory
 						.createChunkBlock(wordBlock.getX1(), wordBlock.getY1(),
-								wordBlock.getX2(), wordBlock.getY2());
+								wordBlock.getX2(), wordBlock.getY2(), wordBlock.getOrder());
 
 			} else {
 			
@@ -801,7 +881,8 @@ public class RuleBasedParser implements Parser {
 		featureList.add(feature);
 		feature = null;
 		HorizontalSplitFeature featureMinusOne;
-
+		
+		//
 		// What kind of column is this?
 		//
 		// a. Titles and large-font blocks
@@ -810,7 +891,7 @@ public class RuleBasedParser implements Parser {
 		// d. text & titles in left or right columns
 		// e. references
 		// f. figure legends
-
+		//
 		for (int i = 1; i < featureList.size(); i++) {
 			featureMinusOne = featureList.get(i - 1);
 			feature = featureList.get(i);
@@ -999,7 +1080,7 @@ public class RuleBasedParser implements Parser {
 			x2 = (chunk.getX2() + width >= parent.getMedian()) ? parent
 					.getMedian() : chunk.getX2() + width;
 
-			entity = modelFactory.createChunkBlock(x1, y1, x2, y2);
+			entity = modelFactory.createChunkBlock(x1, y1, x2, y2, 0);
 
 		} else if (Block.RIGHT.equalsIgnoreCase(lrm)) {
 
@@ -1008,7 +1089,7 @@ public class RuleBasedParser implements Parser {
 			x2 = (chunk.getX2() + width >= parent.getMargin()[2]) ? parent
 					.getMargin()[2] : chunk.getX2() + width;
 
-			entity = modelFactory.createChunkBlock(x1, y1, x2, y2);
+			entity = modelFactory.createChunkBlock(x1, y1, x2, y2, 0 );
 
 		} else {
 
@@ -1016,7 +1097,7 @@ public class RuleBasedParser implements Parser {
 					.getX1() - width;
 			x2 = (chunk.getX2() + width >= parent.getMargin()[2]) ? parent
 					.getMargin()[2] : chunk.getX2() + width;
-			entity = modelFactory.createChunkBlock(x1, y1, x2, y2);
+			entity = modelFactory.createChunkBlock(x1, y1, x2, y2, 0);
 		}
 
 		return entity;

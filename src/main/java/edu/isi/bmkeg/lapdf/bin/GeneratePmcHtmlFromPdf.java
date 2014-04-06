@@ -72,7 +72,7 @@ public class GeneratePmcHtmlFromPdf {
 
 		if (ruleFilePath.equals("-")) {
 			ruleFile = Converters
-					.extractFileFromJarClasspath("rules/general.drl");
+					.extractFileFromJarClasspath(".", "rules/general.drl");
 		} else {
 			ruleFile = new File(ruleFilePath);
 		}

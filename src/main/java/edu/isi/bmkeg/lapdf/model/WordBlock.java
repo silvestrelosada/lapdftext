@@ -19,7 +19,7 @@ public interface WordBlock extends Block, SpatialEntity {
 
 	public int getSpaceWidth();
 
-	public List<WordBlock> readNearbyWords( int dx, int dy );
+	public List<WordBlock> readNearbyWords(int left, int right, int up, int down);
 
 	public WordBlock readClosestBlock( int x, int y );
 	

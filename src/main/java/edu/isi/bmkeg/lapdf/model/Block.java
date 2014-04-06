@@ -15,7 +15,6 @@ public interface Block {
 	public static final String LEFT = "LEFT";
 	public static final String RIGHT = "RIGHT";
 	
-	
 	public PageBlock getPage();
 
 	public void setPage(PageBlock page);
@@ -27,7 +26,6 @@ public interface Block {
 	public String readLeftRightMidLine();
 
 	public boolean isFlush(String condition, int value);
-
 
 
 }

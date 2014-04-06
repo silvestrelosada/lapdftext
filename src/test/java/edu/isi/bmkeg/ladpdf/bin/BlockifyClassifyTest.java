@@ -25,7 +25,8 @@ public class BlockifyClassifyTest extends TestCase
 	protected void setUp() throws Exception
 	{ 
 				
-		URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8/19960021.pdf");
+		URL u = this.getClass().getClassLoader().getResource("sampleData/21602511.pdf");
+//		URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8/19960021.pdf");
 //		URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8/pbio.1000441.pdf");
 		inputDir = new File( u.getPath() );
 		outputDir = new File( inputDir.getParentFile().getPath() + "/temp/output" );
@@ -43,23 +44,23 @@ public class BlockifyClassifyTest extends TestCase
 		}
 	}
 
-/*	@Test
+	@Test
 	public void testInputFileOnly() throws Exception
 	{		
-		String[] args = {m
+		String[] args = {
 				inputDir.getPath(), "-", "-"
 			};
 		BlockifyClassify.main(args);
 	}
 
-	@Test
+/*	@Test
 	public void testInputOutputFiles() throws Exception
 	{		
 		String[] args = {
 				inputDir.getPath(), outputDir.getPath(), "-"
 			};
 		BlockifyClassify.main(args);
-	}*/
+	}
 
 	@Test
 	public void testInputOutputRuleFiles() throws Exception
@@ -68,6 +69,6 @@ public class BlockifyClassifyTest extends TestCase
 				inputDir.getPath(), "-", ruleFile.getPath()
 			};
 		BlockifyClassify.main(args);
-	}
+	}*/
 	
 }

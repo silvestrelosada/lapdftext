@@ -49,7 +49,7 @@ public class SpatialLayoutFeaturesReportGenerator implements TextWriter
 			sb.append("\n\n--------------------------------------------------------------------------");
 			sb.append("--------------------PAGE: "+i+"------------------------\n\n");
 			page = doc.getPage(i);
-			chunks = page.getAllChunkBlocks(SpatialOrdering.COLUMN_AWARE_MIXED_MODE);
+			chunks = page.getAllChunkBlocks(SpatialOrdering.MIXED_MODE);
 			sb.append("\nNumber of Blocks="+chunks.size());
 			int chunkCounter = 1;
 			for(ChunkBlock chunk : chunks){

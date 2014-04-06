@@ -197,7 +197,7 @@ public class LapdfDocument implements Serializable {
 
 			page = this.getPage(pageNumber);
 			List<ChunkBlock> sortedChunkBlockList = page
-					.getAllChunkBlocks(SpatialOrdering.COLUMN_AWARE_MIXED_MODE);
+					.getAllChunkBlocks(SpatialOrdering.MIXED_MODE);
 			// System.out.println("Page:"+ pageNumber);
 			return sortedChunkBlockList.get(sortedChunkBlockList.size() - 1);
 		}
@@ -267,7 +267,7 @@ public class LapdfDocument implements Serializable {
 		}
 		
 		this.setBodyTextFrame(new RTSpatialEntity(
-				(float) x_min, (float) y_min, (float) x_max, (float) y_max
+				(float) x_min, (float) y_min, (float) x_max, (float) y_max, 0
 				));
 		
 	}
@@ -369,7 +369,7 @@ public class LapdfDocument implements Serializable {
 			PageBlock page = this.getPage(i);
 			
 			List<ChunkBlock> chunksPerPage = page.getAllChunkBlocks(
-					SpatialOrdering.PAGE_COLUMN_AWARE_MIXED_MODE
+					SpatialOrdering.MIXED_MODE
 					);
 			
 			for(ChunkBlock chunkBlock:chunksPerPage){
@@ -402,7 +402,7 @@ public class LapdfDocument implements Serializable {
 			PageBlock page = this.getPage(i);
 			
 			List<ChunkBlock> chunksPerPage = page.getAllChunkBlocks(
-					SpatialOrdering.PAGE_COLUMN_AWARE_MIXED_MODE
+					SpatialOrdering.MIXED_MODE
 					);
 			
 			for(ChunkBlock chunkBlock:chunksPerPage){
@@ -426,7 +426,7 @@ public class LapdfDocument implements Serializable {
 			PageBlock page = this.getPage(i);
 			
 			List<ChunkBlock> chunksPerPage = page.getAllChunkBlocks(
-					SpatialOrdering.COLUMN_AWARE_MIXED_MODE
+					SpatialOrdering.MIXED_MODE
 					);
 			
 			for(ChunkBlock chunkBlock:chunksPerPage){
@@ -450,7 +450,7 @@ public class LapdfDocument implements Serializable {
 			PageBlock page = this.getPage(i);
 			
 			blocks.addAll( page.getAllChunkBlocks(
-					SpatialOrdering.COLUMN_AWARE_MIXED_MODE
+					SpatialOrdering.ORIGINAL_MODE
 					));
 			
 		}
@@ -495,7 +495,7 @@ public class LapdfDocument implements Serializable {
 			xmlPage.setPageNumber( i+1 );
 			
 			Iterator<ChunkBlock> cIt = page.getAllChunkBlocks(
-					SpatialOrdering.COLUMN_AWARE_MIXED_MODE
+					SpatialOrdering.ORIGINAL_MODE
 					).iterator();
 			
 			while( cIt.hasNext() ) {
@@ -516,6 +516,7 @@ public class LapdfDocument implements Serializable {
 				xmlChunk.setH( chunk.getY2() - chunk.getY1() );
 				xmlChunk.setX( chunk.getX1() );
 				xmlChunk.setY( chunk.getY1() );
+				xmlChunk.setI( chunk.getOrder() );
 				
 				List<SpatialEntity> wbList = page.containsByType(chunk,
 						SpatialOrdering.COLUMN_AWARE_MIXED_MODE, 
@@ -539,6 +540,7 @@ public class LapdfDocument implements Serializable {
 						xmlWord.setH( word.getY2() - word.getY1() );
 						xmlWord.setX( word.getX1() );
 						xmlWord.setY( word.getY1() );
+						xmlWord.setI( word.getOrder() );
 						
 						if( !fontStyles.containsKey( word.getFont() ) ) {
 							fontStyles.put(word.getFont(), fsCount++);
@@ -595,6 +597,10 @@ public class LapdfDocument implements Serializable {
 		//
 		// NOTE: WHAT ABOUT OAI SECTION NAMES FOR DOCUMENT SECTION TYPES?
 		//
+		if( xmlSecList == null ) {
+			throw new Exception("No xml sections built.");
+		}
+		
 		xmlSecList.addAll( this.buildPmxXmlSecListFromBodyHeading(false) );
 		
 		xmlSecList.addAll(buildPmxXmlSecListFromStem( ChunkBlock.TYPE_REFERENCES ));
