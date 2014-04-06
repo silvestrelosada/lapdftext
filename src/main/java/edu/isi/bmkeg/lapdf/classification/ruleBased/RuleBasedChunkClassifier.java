@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.drools.KnowledgeBase;
@@ -11,9 +12,11 @@ import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.DecisionTableConfiguration;
 import org.drools.builder.DecisionTableInputType;
 import org.drools.builder.KnowledgeBuilder;
+import org.drools.builder.KnowledgeBuilderConfiguration;
 import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
 import org.drools.compiler.DecisionTableFactory;
+import org.drools.compiler.PackageBuilderConfiguration;
 import org.drools.definition.KnowledgePackage;
 import org.drools.io.Resource;
 import org.drools.io.ResourceFactory;
@@ -51,7 +54,11 @@ public class RuleBasedChunkClassifier implements Classifier<ChunkBlock> {
 	public RuleBasedChunkClassifier(String droolsFileName,
 			AbstractModelFactory modelFactory) throws IOException, ClassificationException  {
 
-		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+		// Workaround for JBRULES-3163
+		Properties properties = new Properties();
+		properties.setProperty( "drools.dialect.java.compiler.lnglevel", "1.6" );
+		PackageBuilderConfiguration cfg = new PackageBuilderConfiguration( properties );
+		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder( cfg );
 		kbase = KnowledgeBaseFactory.newKnowledgeBase();
 		
 		File expandedFile = null;
