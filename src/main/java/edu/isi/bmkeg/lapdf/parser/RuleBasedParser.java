@@ -16,9 +16,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import com.infomatiq.jsi.Rectangle;
-
 import edu.isi.bmkeg.lapdf.extraction.JPedalExtractor;
+import edu.isi.bmkeg.lapdf.extraction.PDFBoxExtractor;
 import edu.isi.bmkeg.lapdf.extraction.exceptions.InvalidPopularSpaceValueException;
 import edu.isi.bmkeg.lapdf.features.HorizontalSplitFeature;
 import edu.isi.bmkeg.lapdf.model.Block;
@@ -26,7 +25,6 @@ import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
 import edu.isi.bmkeg.lapdf.model.PageBlock;
 import edu.isi.bmkeg.lapdf.model.WordBlock;
-import edu.isi.bmkeg.lapdf.model.RTree.RTModelFactory;
 import edu.isi.bmkeg.lapdf.model.factory.AbstractModelFactory;
 import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
@@ -49,6 +47,7 @@ public class RuleBasedParser implements Parser {
 	private ArrayList<PageBlock> pageList;
 	
 	private JPedalExtractor pageExtractor;
+	//private PDFBoxExtractor pageExtractor;
 	
 	private int idGenerator;
 	
@@ -137,7 +136,7 @@ public class RuleBasedParser implements Parser {
 		}
 		
 		//
-		// Calling 'hasNext()' get the text from JPedal.
+		// Calling 'hasNext()' get the text from the extractor.
 		// 
 		while (pageExtractor.hasNext()) {
 			
@@ -167,7 +166,7 @@ public class RuleBasedParser implements Parser {
 				buildChunkBlocksSlowly(pageWordBlockList, pageBlock);				
 			}
 
-			//deleteHighlyOverlappedChunkBlocks(pageBlock);
+			mergeHighlyOverlappedChunkBlocks(pageBlock);
 			
 			if (isDebugImages()) {
 				PageImageOutlineRenderer.dumpChunkTypePageImageToFile(
@@ -256,7 +255,7 @@ public class RuleBasedParser implements Parser {
 			document.calculateMostPopularFontStyles();
 
 		}
-
+		
 		return document;
 	}
 
@@ -1104,58 +1103,51 @@ public class RuleBasedParser implements Parser {
 
 	}
 	
-	private void deleteHighlyOverlappedChunkBlocks(PageBlock page) {
+	private void mergeHighlyOverlappedChunkBlocks(PageBlock page) {
 		
 		List<ChunkBlock> chunkBlockList = page.getAllChunkBlocks(
 				SpatialOrdering.MIXED_MODE);
 		
 		List<SpatialEntity> wordList;
 		SpatialEntity intersectingRectangle;
-		double property1, property2;
 
 		for (SpatialEntity entity : chunkBlockList) {
 
-			ChunkBlock chunky = (ChunkBlock) entity;
+			ChunkBlock sourceChunk = (ChunkBlock) entity;
 
-			List<SpatialEntity> neighbouringChunkBlockList = page.intersectsByType(chunky,
+			List<SpatialEntity> neighbouringChunkBlockList = page.intersectsByType(sourceChunk,
 					SpatialOrdering.MIXED_MODE, ChunkBlock.class);
 
 			for (SpatialEntity neighbourEntity : neighbouringChunkBlockList) {
 
 				ChunkBlock neighbourChunk = (ChunkBlock) neighbourEntity;
+				
+				if( neighbourChunk == sourceChunk ) 
+					continue;
 
-				intersectingRectangle = chunky
+				intersectingRectangle = sourceChunk
 						.getIntersectingRectangle(neighbourChunk);
+				
+				double intersectionArea = intersectingRectangle.getHeight() * 
+						intersectingRectangle.getWidth();
+				double sourceArea = (double) (sourceChunk.getWidth() * sourceChunk.getHeight());
+				double neighborArea = (double) (neighbourChunk.getWidth() * neighbourChunk
+						.getHeight());
+				
+				double propOfNeighbor = intersectionArea / neighborArea;
 
-				property1 = (intersectingRectangle.getHeight() * intersectingRectangle
-						.getWidth())
-						/ (double) (chunky.getWidth() * chunky.getHeight());
-
-				property2 = (double) (intersectingRectangle.getHeight() * intersectingRectangle
-						.getWidth())
-						/ (double) (neighbourChunk.getWidth() * neighbourChunk
-								.getHeight());
-
-				if (property1 > property2 && property1 > 0.9) {
-					wordList = page.containsByType(chunky, null,
-							WordBlock.class);
-
-					for (SpatialEntity wordEntity : wordList)
-						((Block) wordEntity).setContainer(neighbourChunk);
-					page.delete(chunky, chunky.getId());
-
-				}
-
-				if (property2 > property1 && property2 > 0.9) {
+				if (propOfNeighbor > 0.7) {
+					
 					wordList = page.containsByType(neighbourChunk, null,
 							WordBlock.class);
-
 					for (SpatialEntity wordEntity : wordList)
-						((Block) wordEntity).setContainer(chunky);
+						((Block) wordEntity).setContainer(sourceChunk);
 					page.delete(neighbourChunk, neighbourChunk.getId());
 
 				}
-
+				
+				int pause = 0;
+				
 			}
 
 		}

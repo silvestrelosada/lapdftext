@@ -495,7 +495,7 @@ public class LapdfDocument implements Serializable {
 			xmlPage.setPageNumber( i+1 );
 			
 			Iterator<ChunkBlock> cIt = page.getAllChunkBlocks(
-					SpatialOrdering.ORIGINAL_MODE
+					SpatialOrdering.COLUMN_AWARE_MIXED_MODE
 					).iterator();
 			
 			while( cIt.hasNext() ) {
@@ -519,7 +519,7 @@ public class LapdfDocument implements Serializable {
 				xmlChunk.setI( chunk.getOrder() );
 				
 				List<SpatialEntity> wbList = page.containsByType(chunk,
-						SpatialOrdering.COLUMN_AWARE_MIXED_MODE, 
+						SpatialOrdering.ORIGINAL_MODE, 
 						WordBlock.class);
 				if( wbList != null ) {					
 					Iterator<SpatialEntity> wbIt = wbList.iterator();

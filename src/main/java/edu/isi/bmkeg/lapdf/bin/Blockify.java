@@ -1,14 +1,14 @@
 package edu.isi.bmkeg.lapdf.bin;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import edu.isi.bmkeg.lapdf.controller.LapdfEngine;
-import edu.isi.bmkeg.lapdf.controller.LapdfMode;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
 import edu.isi.bmkeg.utils.Converters;
@@ -16,6 +16,8 @@ import edu.isi.bmkeg.utils.xml.XmlBindingTools;
 
 public class Blockify {
 
+	private static Logger logger = Logger.getLogger(Blockify.class);
+	
 	private static String USAGE = "usage: <input-dir-or-file> [<output-dir>]\n\n"
 			+ "<input-dir-or-file> - the full path to the PDF file or directory to be extracted \n"
 			+ "<output-dir> (optional or '-') - the full path to the output directory \n\n"
@@ -68,10 +70,13 @@ public class Blockify {
 			Pattern patt = Pattern.compile("\\.pdf$");
 			Map<String, File> inputFiles = Converters.recursivelyListFiles(
 					inputFileOrDir, patt);
-			Iterator<String> it = inputFiles.keySet().iterator();
-			while (it.hasNext()) {
-				String key = it.next();
-				File pdf = inputFiles.get(key);
+			
+			String[] fileNameArray = inputFiles.keySet().toArray(new String[inputFiles.size()]); 
+			Arrays.sort(fileNameArray);
+			
+			for( int i=0; i<fileNameArray.length; i++) {
+				File pdf = inputFiles.get(fileNameArray[i]);
+				logger.info("Processing " + pdf.getPath());
 				String pdfStem = pdf.getName();
 				pdfStem = pdfStem.replaceAll("\\.pdf", "");
 
@@ -82,10 +87,16 @@ public class Blockify {
 				File outFile = new File(outXmlPath);
 
 				LapdfDocument lapdf = engine.blockifyFile(pdf);
+				if( lapdf == null ) {
+					logger.info("Parse failed, skipping.");
+					continue;
+				}
 				LapdftextXMLDocument xmlDoc = lapdf
 						.convertToLapdftextXmlFormat();
 				XmlBindingTools.saveAsXml(xmlDoc, outFile);
 
+				logger.info(outFile.getPath() + " generated.");
+				
 			}
 
 		} else {
@@ -99,6 +110,8 @@ public class Blockify {
 			LapdfDocument lapdf = engine.blockifyFile(inputFileOrDir);
 			LapdftextXMLDocument xmlDoc = lapdf.convertToLapdftextXmlFormat();
 			XmlBindingTools.saveAsXml(xmlDoc, outFile);
+
+			logger.info(outFile.getPath() + " generated.");
 
 		}
 

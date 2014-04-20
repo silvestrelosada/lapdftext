@@ -84,9 +84,12 @@ public abstract class RTSpatialContainer implements SpatialContainer {
 
 	@Override
 	public int getMedian() {
+		
 		if( margin == null )
 			this.getMargin();
+		
 		return margin[0] + (margin[2] - margin[0]) / 2;
+	
 	}
 
 	@Override
@@ -279,7 +282,6 @@ public abstract class RTSpatialContainer implements SpatialContainer {
 		} else {
 			mostPopularWordWidth = mostPopular;
 		}
-		propagateWordBasedCalculation();
 		return mostPopularWordWidth;
 	}
 
@@ -309,21 +311,8 @@ public abstract class RTSpatialContainer implements SpatialContainer {
 		} else {
 			mostPopularWordHeightPerPage = mostPopular;
 		}
-		propagateWordBasedCalculation();
+
 		return mostPopularWordHeightPerPage;
-	}
-
-	private void propagateWordBasedCalculation() {
-		
-		if (mostPopularWordWidth == -100) {
-			getMostPopularWordWidthPage();
-		}
-
-		if (mostPopularWordHeightPerPage == -100) {
-			getMostPopularWordHeightPage();
-		}
-
-		list = null;
 
 	}
 

@@ -280,11 +280,11 @@
 			<artifactId>drools-templates</artifactId>
 			<version>5.2.1.Final</version>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.jpedal</groupId>
 			<artifactId>jpedal</artifactId>
 			<version>lgpl</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>net.sourceforge.jsi</groupId>
 			<artifactId>jsi</artifactId>
@@ -329,9 +329,19 @@
 			<version>1.7.3</version>
 		</dependency>
 		<dependency>
-			<groupId>pdfbox</groupId>
+			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
-			<version>0.7.3</version>
+			<version>1.8.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15</artifactId>
+			<version>1.44</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcmail-jdk15</artifactId>
+			<version>1.44</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.trove4j</groupId>

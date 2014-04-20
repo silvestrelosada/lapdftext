@@ -12,11 +12,11 @@ public class LapdftextXMLWord extends LapdftextXMLRectangle implements Serializa
 
 	private String t;
 
+	private String font;
+
 	private int fId;
 
 	private int sId;
-
-	private int order;
 
 	@XmlAttribute	
 	public String getT() {
@@ -46,12 +46,12 @@ public class LapdftextXMLWord extends LapdftextXMLRectangle implements Serializa
 	}
 
 	@XmlAttribute	
-	public int getOrder() {
-		return order;
+	public String getFont() {
+		return font;
 	}
 
-	public void setOrder(int order) {
-		this.order = order;
+	public void setFont(String font) {
+		this.font = font;
 	}
 	
 }

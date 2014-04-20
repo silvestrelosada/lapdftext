@@ -48,8 +48,7 @@ public class RTWordBlock extends RTSpatialEntity implements WordBlock {
 		} else {
 			this.word = "";
 		}
-			
-		
+
 		this.spaceWidth = spaceWidth;
 
 	}

@@ -180,14 +180,12 @@ public class JPedalExtractor implements Extractor {
 				);
 		
 		// If there are no words on the page (a common situation 
-		// with splashy handouts), we skip to the next page. 
-		if( words == null ) {
-			currentPage++;
-			PDFDecoder.flushObjectValues(false);
-			return false;
+		// with splashy handouts), make sure we do not encounter 
+		// a null pointer exception here. 
+		Iterator<String> wordIterator = (new ArrayList<String>()).iterator();		
+		if( words != null ) {
+			wordIterator = words.iterator();
 		}
-
-		Iterator<String> wordIterator = words.iterator();
 
 		if (wordListPerPage == null)
 			wordListPerPage = new TreeSet<WordBlock>(

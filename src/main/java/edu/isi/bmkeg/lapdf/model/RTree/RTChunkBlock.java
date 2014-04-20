@@ -138,11 +138,10 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 		if (this.alignment != null)
 			return this.alignment;
 		
-		PageBlock parent = (PageBlock) this.getContainer();
-		int median = parent.getMedian();
+		PageBlock page = (PageBlock) this.getContainer();
+		int median = page.getMedian();
 		int X1 = this.getX1();
 		int width = this.getWidth();
-		int averageWordHeightForTheDocument = parent.getDocument().readMostPopularWordHeight();
 
 		if ( X1 + width < median ) {
 		
@@ -154,7 +153,7 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 		
 		} else {
 		
-			int left = median - X1;
+			/*int left = median - X1;
 			int right = X1 + width - median;
 
 			double leftIsToRight = (double) left / (double) right;
@@ -163,7 +162,7 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 				this.alignment = RIGHT;
 			else if (rightIsToLeft < 0.05)
 				this.alignment = LEFT;
-			else
+			else*/
 				this.alignment = MIDLINE;
 		}
 			

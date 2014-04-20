@@ -22,7 +22,7 @@ public class BlockifyTest extends TestCase
 	
 	protected void setUp() throws Exception { 
 				
-		URL u = this.getClass().getClassLoader().getResource("sampleData/21602511.pdf");
+		URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8/pbio.1000441.pdf");
 		//URL u = this.getClass().getClassLoader().getResource("sampleData/plos/8_8");
 		inputDir = new File( u.getPath() );
 		outputDir = new File( inputDir.getParentFile().getPath() + "/temp/output" );

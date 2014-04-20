@@ -79,36 +79,35 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 	
 	}
 	
+	/** 
+	 * To preserve the transitive relation needed for this process. 
+	 * We order all blocks simply as midline, left column, right column.
+	 * Trying to be fancy here breaks this condition, since a left column element
+	 * could be after a midline element but before a right column element that 
+	 * could be itself be before the same midline element. 
+	 * 
+	 * This would break transitivity.
+	 * 
+	 * @param o1
+	 * @param o2
+	 * @return
+	 */
 	private int camdOrdering(SpatialEntity o1, SpatialEntity o2) {
 
 		String o1Alignment = ((Block) o1).readLeftRightMidLine();
 		String o2Alignment = ((Block) o2).readLeftRightMidLine();
-
-		int pageNumber = -1;
-		Block b = ((Block) o1).getContainer();
-		PageBlock pgB = null;
 		
-		if( b instanceof PageBlock ) {
-			pgB = (PageBlock) b;
-			pageNumber = pgB.getPageNumber();
-		} else {
-			ChunkBlock cb = (ChunkBlock) b;
-			pgB = cb.getPage();
-			pageNumber = pgB.getPageNumber();			
-		}
-		
-		int o1y1 = o1.getY1();
-		int o2y1 = o2.getY1();
-		int pageHeight = pgB.getPageBoxHeight();
-
 		if (o1Alignment.equals(o2Alignment)) {
 
 			return mixedOrdering(o1, o2);
 
-		} else if (Block.MIDLINE.equalsIgnoreCase(o1Alignment)
-				|| Block.MIDLINE.equalsIgnoreCase(o2Alignment)) {
+		} else if (Block.MIDLINE.equalsIgnoreCase(o1Alignment)) {
 			
-			return mixedOrdering(o1, o2);
+			return -1;
+
+		} else if (Block.MIDLINE.equalsIgnoreCase(o2Alignment)) {
+
+			return 1;
 
 		} else if (Block.LEFT.equalsIgnoreCase(o1Alignment)) {
 
@@ -138,14 +137,15 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 	private int horizontalOrdering(SpatialEntity o1, SpatialEntity o2) {
 
 		Block b1 = (Block) o1;
-		int p1 = b1.getPage().getPageNumber();
-		
 		Block b2 = (Block) o2;
-		int p2 = b2.getPage().getPageNumber();
 		
-		if( p1 != p2 )
-			return p1 - p2;
-
+		if( b1.getPage() != null && b2.getPage() != null ) {
+			int p1 = b1.getPage().getPageNumber();
+			int p2 = b2.getPage().getPageNumber();
+			if( p1 != p2 )
+				return p1 - p2;			
+		}
+		
 		return o1.getX1() - o2.getX1();
 	
 	}
@@ -153,13 +153,8 @@ public class SpatialOrdering implements Comparator<SpatialEntity> {
 	private int verticalOrdering(SpatialEntity o1, SpatialEntity o2) {
 	
 		Block b1 = (Block) o1;
-		int p1 = b1.getPage().getPageNumber();
-		
 		Block b2 = (Block) o2;
-		int p2 = b2.getPage().getPageNumber();
-		
-		if( p1 != p2 )
-			return p1 - p2;
+
 		
 		int y1Diff = o1.getY1() - o2.getY1();
 		
