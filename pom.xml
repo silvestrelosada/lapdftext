@@ -280,11 +280,11 @@
 			<artifactId>drools-templates</artifactId>
 			<version>5.2.1.Final</version>
 		</dependency>
- 		<dependency>
+		<dependency>
 			<groupId>org.jpedal</groupId>
 			<artifactId>jpedal</artifactId>
 			<version>lgpl-1.0.1</version>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.jsi</groupId>
 			<artifactId>jsi</artifactId>
