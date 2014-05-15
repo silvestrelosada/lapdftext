@@ -183,7 +183,10 @@ public abstract class RTSpatialContainer implements SpatialContainer {
 			mostPopularHorizontalSpaceBetweenWords = mostPopular;
 		}
 
-		propagateCalculation();
+		//
+		// TODO - CHECK IF WE REALLY NEED THIS...
+		//
+		//propagateCalculation();
 		// System.out.println("Returning mostPopularHorizontalSpaceBetweenWords"+mostPopularHorizontalSpaceBetweenWords);
 		return mostPopularHorizontalSpaceBetweenWords;
 	}

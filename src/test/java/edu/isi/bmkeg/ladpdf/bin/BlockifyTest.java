@@ -46,15 +46,5 @@ public class BlockifyTest extends TestCase
 			};
 		Blockify.main(args);
 	}
-
-	@Test
-	public void testInputOutputFiles() throws Exception
-	{		
-		String[] args = {
-				inputDir.getPath(), outputDir.getPath()
-			};
-		Blockify.main(args);
-	}
-
 	
 }

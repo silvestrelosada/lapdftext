@@ -46,15 +46,5 @@ public class ImagifyBlocksTest extends TestCase
 			};
 		ImagifyBlocks.main(args);
 	}
-
-	@Test
-	public void testInputOutputFiles() throws Exception
-	{		
-		String[] args = {
-				inputDir.getPath(), outputDir.getPath()
-			};
-		ImagifyBlocks.main(args);
-	}
-
 	
 }
