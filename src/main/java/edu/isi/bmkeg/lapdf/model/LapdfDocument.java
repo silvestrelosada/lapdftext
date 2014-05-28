@@ -18,6 +18,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Comment;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -812,9 +819,47 @@ public class LapdfDocument implements Serializable {
 		StreamSource source = new StreamSource(inputReader);
 		StreamResult result = new StreamResult(outputWriter);
 		transformer.transform(source, result);
-		String html = outputWriter.toString(); 
+		
+		//
+		// We simplify the HTML encoded from the PMC file to preserve simple formatting 
+		// but to strip away most other functional properties of the document. 
+		//
+		Document doc = Jsoup.parse(outputWriter.toString());
 
-		return html;
+		//
+		// pulling the text from the html, we preserve some of the formatting as simple html 
+		// tags with no additional ID values. We strip the 
+		//
+		doc.select("div").unwrap();
+		
+		// Ditch <span> and <img> elements completely, 
+		// TODO: may need to check this, what text might occur within spans?
+		doc.select("span").remove();
+		doc.select("img").remove();
+		
+		Elements bodyEls = doc.select("body");
+		for( Element bodyEl : bodyEls ) {
+			for( Element el : bodyEl.getAllElements() ) {
+				List<String> keys = new ArrayList<String>();
+				for( Attribute at : el.attributes() ) {
+					keys.add(at.getKey());
+				}
+				for( String key : keys ) {
+					el.removeAttr(key);
+				}
+			}
+			List<Node> comments = new ArrayList<Node>();
+			for(Node n: bodyEl.childNodes()){
+	            if(n instanceof Comment){
+	                comments.add(n);
+	            }
+	        }
+			for(Node n : comments){
+                n.remove();
+	        }
+		}		
+		
+		return doc.toString();
 		
 	}
 
