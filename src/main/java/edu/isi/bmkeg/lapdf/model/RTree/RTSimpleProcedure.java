@@ -4,7 +4,7 @@ import edu.isi.bmkeg.lapdf.model.ChunkBlock;
 import edu.isi.bmkeg.lapdf.model.WordBlock;
 import edu.isi.bmkeg.lapdf.model.ordering.SpatialOrdering;
 import edu.isi.bmkeg.lapdf.model.spatial.SpatialEntity;
-import gnu.trove.procedure.TIntProcedure;
+import gnu.trove.TIntProcedure;
 
 import java.util.ArrayList;
 import java.util.Collection;
