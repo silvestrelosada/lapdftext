@@ -273,7 +273,6 @@ OTHER PROCESSING IS IDENTICAL.
       </div>
     </xsl:if> -->
 
-    <!-- THIS SECTION IS REMOVED 
     <xsl:for-each select="floats-group | floats-wrap">
       <div id="{$this-article}-floats" class="back">
         <xsl:call-template name="main-title">
@@ -283,7 +282,7 @@ OTHER PROCESSING IS IDENTICAL.
         </xsl:call-template>
         <xsl:apply-templates/>
       </div>
-    </xsl:for-each>-->
+    </xsl:for-each>
 
     <!-- more metadata goes in the footer -->
     <!-- THIS SECTION IS REMOVED 
