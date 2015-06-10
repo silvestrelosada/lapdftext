@@ -54,5 +54,15 @@ public class LapdftextXMLChunk extends LapdftextXMLRectangle implements Serializ
 	public void setWords(List<LapdftextXMLWord> words) {
 		this.words = words;
 	}
+	
+	public String toString() {
+		String s = "";
+		for( LapdftextXMLWord word : this.words ) {
+			if( s.length() > 0 )
+				s += " ";
+			s += word.getT();
+		}
+		return s;
+	}
 
 }
