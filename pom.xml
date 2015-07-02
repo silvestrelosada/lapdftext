@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>lapdftext</artifactId>
-	<version>1.7.4-SNAPSHOT</version>
+	<version>1.7.5-SNAPSHOT</version>
 	<name>LA-PDFText</name>
 	<description>A text extraction tool based on the layout of blocks withing PDF files.</description>
 
@@ -62,23 +62,19 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>xjc</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<bindingDirectory>${project.basedir}/src/main/xsd</bindingDirectory>
-					<schemaFiles>XSD-Blue/journalpublishing3.xsd</schemaFiles>
-					<extension>true</extension>
-				</configuration>
-			</plugin>
+			
+
+			<!-- NOTE - THE PLUGIN TO RUN JAXB2 ON THE CONFIGURATION OF NXML DOCUMENTS
+			 WILL NOT PICK UP THE CORRECT PATHS WHEN RUN FROM THE PARENT PROJECT.   
+			 GIVEN THAT THE PREFERRED METHOD OF EXTRACTING TEXT FROM THE NXML FILES 
+			 IS NOW TO RUN THE PYTHON nxml2txt SCRIPT. PERHAPS WE SHOULD COMPLETELY 
+			 DITCH THIS?
+				<plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>jaxb2-maven-plugin</artifactId> 
+				<executions> <execution> <id>xjc</id> <goals> <goal>xjc</goal> </goals> </execution> 
+				</executions> <configuration> <bindingDirectory>${project.basedir}/src/main/xsd</bindingDirectory> 
+				<schemaFiles>XSD-Blue/journalpublishing3.xsd</schemaFiles> <extension>true</extension> 
+				</configuration> </plugin> -->
+				
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>

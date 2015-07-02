@@ -2,13 +2,13 @@ package edu.isi.bmkeg.lapdf.bin;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
 import edu.isi.bmkeg.lapdf.controller.LapdfEngine;
+import edu.isi.bmkeg.lapdf.extraction.exceptions.EncryptionException;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
 import edu.isi.bmkeg.utils.Converters;
@@ -86,7 +86,21 @@ public class Blockify {
 
 				File outFile = new File(outXmlPath);
 
-				LapdfDocument lapdf = engine.blockifyFile(pdf);
+				if( outFile.exists() )
+					continue;
+				
+				LapdfDocument lapdf = null;
+				try {
+					lapdf = engine.blockifyFile(pdf);
+				} catch(EncryptionException e) {
+					logger.error("File encrypted, skipping.");
+					continue;
+				} catch(Exception e2) {
+					logger.error("Unknown error. Skipping.");
+					e2.printStackTrace();
+					continue;					
+				}
+				
 				if( lapdf == null ) {
 					logger.info("Parse failed, skipping.");
 					continue;

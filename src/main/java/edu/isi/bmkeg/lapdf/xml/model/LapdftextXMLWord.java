@@ -54,4 +54,8 @@ public class LapdftextXMLWord extends LapdftextXMLRectangle implements Serializa
 		this.font = font;
 	}
 	
+	public String toString() {
+		return this.t;
+	}
+	
 }
