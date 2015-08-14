@@ -348,10 +348,6 @@ public class LAPDFTextStripper extends PDFStreamEngine
             {
                 throw new WrappedIOException("Error decrypting document, details: ", e);
             }
-            catch (InvalidPasswordException e)
-            {
-                throw new WrappedIOException("Error: document is encrypted", e);
-            }
         }
         processPages( document.getDocumentCatalog().getAllPages() );
         endDocument(document);

@@ -336,7 +336,6 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 	
 	}
 
-	
 	public List<ChunkBlock> getOverlappingNeighbors(
 			int nsew, 
 			PageBlock parent,
@@ -381,7 +380,95 @@ public class RTChunkBlock extends RTSpatialEntity implements ChunkBlock {
 		 return l;
 		 
 	}
+	
+	
+	/** 
+	 * Iterate reading box in the desired direction nearest dense, 
+	 * long block or leave the page.
+	 * 
+	 * @param nsew
+	 * @return
+	 * @throws Exception 
+	 */
+	public ChunkBlock readNearestNeighborChunkBlock(int nsew) throws Exception {
+		
+		int x = this.getX1();
+		int y = this.getY1();
+		int w = this.getWidth();
+		int h = this.getHeight();
+		int dx = 0, dy = 0;
+		
+		if (nsew == LapdfDirection.NORTH) {
+			
+			h = 10;
+			y = y - h - 1;
+			dy = -h;
+			
+		} else if (nsew == LapdfDirection.SOUTH) {
+		
+			y = y + h + 1;
+			h = 10;
+			dy = h;
+					
+		} else if (nsew == LapdfDirection.EAST) {
+		
+			x = x + w + 1;
+			w = 10;
+			dx = w;
 
+		} else if (nsew == LapdfDirection.WEST) {
+
+			w = 10;
+			x = x - w - 1;
+			dx = -w;
+		
+		} else {
+			
+			throw new Exception("NearestNeighborChunkBlock only works with North/South/East/West");
+
+		}
+
+		SpatialEntity entity = new RTChunkBlock(
+				x, y, x + w, y + h, -1);
+		List<SpatialEntity> list = this.getPage().intersectsByType(
+				entity, null, ChunkBlock.class);
+		list.remove(this);
+		
+		/*
+		 * margin[0] = (int) marginRect.minX;
+		 * margin[1] = (int) marginRect.minY;
+		 * margin[2] = (int) marginRect.maxX;
+		 * margin[3] = (int) marginRect.maxY;
+		 */
+		int[] margins = this.getPage().getMargin();
+		
+		while( list.size() == 0  && 
+				entity.getX1() >= margins[0]-2 &&
+				entity.getY1() >= margins[1]-2 &&
+				entity.getX2() <= margins[2]+2 &&
+				entity.getY2() <= margins[3]+2 ) {
+			
+			x += dx;
+			y += dy;
+			entity = new RTChunkBlock(x, y, x + w, y + h, -1);
+
+			list = this.getPage().intersectsByType(entity, null, ChunkBlock.class);
+			list.remove(this);
+			
+			System.out.println(x + "," + y + "," + (x+w) + "," + (y+h));
+			
+		}
+		
+		ChunkBlock nn = null;
+		for( SpatialEntity se : list) {
+			nn = (ChunkBlock) se;
+			break;
+		}
+		
+		return nn;
+						 
+	}
+	
 	@Override
 	public double readDensity() {
 		

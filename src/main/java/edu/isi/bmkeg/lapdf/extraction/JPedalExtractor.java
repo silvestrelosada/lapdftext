@@ -1,5 +1,6 @@
 package edu.isi.bmkeg.lapdf.extraction;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
 import org.jpedal.PdfDecoder;
+import org.jpedal.exception.PdfException;
 import org.jpedal.grouping.PdfGroupingAlgorithms;
 import org.jpedal.objects.PdfPageData;
 import org.jpedal.utils.Strip;
@@ -37,7 +39,7 @@ public class JPedalExtractor implements Extractor {
 	private static Logger logger = Logger.getLogger(JPedalExtractor.class);
 	
 	Set<WordBlock> wordListPerPage = null;
-	PdfDecoder PDFDecoder = null;
+	PdfDecoder pdfDecoder = null;
 	int currentPage = 1;
 	int pageCount;
 	private static Document xmlDocument;
@@ -59,42 +61,42 @@ public class JPedalExtractor implements Extractor {
 		docBuilder = dbfac.newDocumentBuilder();
 		
 		this.modelFactory = modelFactory;
-		this.PDFDecoder = new PdfDecoder(false);
+		this.pdfDecoder = new PdfDecoder(false); 
 		
 		this.avgHeightFrequencyCounter = new IntegerFrequencyCounter(1);
 		this.spaceFrequencyCounterMap = new HashMap<Integer, IntegerFrequencyCounter>();
 
-		PDFDecoder.setExtractionMode(PdfDecoder.TEXT); 
-		PDFDecoder.init(true);
+		pdfDecoder.setExtractionMode(PdfDecoder.TEXT); 
+		pdfDecoder.init(true);
 		PdfGroupingAlgorithms.useUnrotatedCoords = true;
 		
 		// if you do not require XML content, 
 		// pure text extraction is much faster.
-		PDFDecoder.useXMLExtraction();
+		pdfDecoder.useXMLExtraction();
 
 	}
 
 	public void init(File file) throws Exception {
 		
-		if (PDFDecoder.isOpen()) {
-			PDFDecoder.flushObjectValues(true);
-			PDFDecoder.closePdfFile();
+		if (pdfDecoder.isOpen()) {
+			pdfDecoder.flushObjectValues(true);
+			pdfDecoder.closePdfFile();
 		}
 		
 		this.currentFile = file;
 
-		PDFDecoder.openPdfFile(file.getPath());
+		pdfDecoder.openPdfFile(file.getPath());
 		currentPage = 1;
-		pageCount = PDFDecoder.getPageCount();
-		if (!PDFDecoder.isExtractionAllowed()) {
+		pageCount = pdfDecoder.getPageCount();
+		if (!pdfDecoder.isExtractionAllowed()) {
 			throw new AccessException(file.getPath());
-		} else if (PDFDecoder.isEncrypted()) {
+		} else if (pdfDecoder.isEncrypted()) {
 			throw new EncryptionException(file.getPath());
 		}
 
 	}
 
-	private int[] generatePageBoundaries(PdfPageData currentPageData) {
+	private int[] generatePageBoundaries(PdfPageData currentPageData) throws PdfException {
 		
 		// 0:TLX, 1:TLY, 2:BRX, 3:BRY
 		int[] dimensions = new int[4];
@@ -154,11 +156,11 @@ public class JPedalExtractor implements Extractor {
 		String currentWord;
 		String style = null;
 
-		PDFDecoder.decodePage(currentPage);
+		pdfDecoder.decodePage(currentPage);
 		
-		PdfGroupingAlgorithms currentGrouping = PDFDecoder.getGroupingObject();
+		PdfGroupingAlgorithms currentGrouping = pdfDecoder.getGroupingObject();
 
-		PdfPageData currentPageData = PDFDecoder.getPdfPageData();
+		PdfPageData currentPageData = pdfDecoder.getPdfPageData();
 		int[] dimensions;
 
 		// pageHeight.add(currentPageData.getCropBoxHeight(page));
@@ -254,7 +256,7 @@ public class JPedalExtractor implements Extractor {
 		}
 		
 		currentPage++;
-		PDFDecoder.flushObjectValues(false);
+		pdfDecoder.flushObjectValues(false);
 
 		return true;
 	
@@ -286,8 +288,8 @@ public class JPedalExtractor implements Extractor {
 
 		if (currentPage == pageCount + 1) {
 
-			PDFDecoder.flushObjectValues(true);
-			PDFDecoder.closePdfFile();
+			pdfDecoder.flushObjectValues(true);
+			pdfDecoder.closePdfFile();
 			haveNext = false;
 
 		}
