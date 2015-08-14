@@ -83,6 +83,7 @@ public class ExtractFigureImagesFromDirectory {
 						options.outdir.getPath());
 				
 				newPath = newPath.substring(0, newPath.indexOf(".pdf"));
+				String stem = pdf.getName().substring(0,pdf.getName().length()-4);
 				File newDir = new File(newPath);
 				newDir.mkdirs();
 				
@@ -93,7 +94,7 @@ public class ExtractFigureImagesFromDirectory {
 				for(String name : imageList.keySet()) {
 	
 					BufferedImage img = imageList.get(name);
-					File outputfile = new File(newPath + "/fig_" + name + ".png");
+					File outputfile = new File(newPath + "/" + stem + "_fig_" + name + ".png");
 					ImageIO.write(img, "png", outputfile);
 	
 					logger.info("Extracting image to " + outputfile.getPath());
