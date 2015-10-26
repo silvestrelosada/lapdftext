@@ -841,12 +841,11 @@ public class LapdfEngine {
 		SimpleRenderer renderer = new SimpleRenderer();
 		renderer.setResolution(72 * 5);
 		List<Image> pageImages = renderer.render(document);
-
+		
 		for (ChunkBlock c : doc.readAllChunkBlocks()) {
 			String txt = c.readChunkText();
 			Matcher m = patt.matcher(txt);
 			if (m.find()) {
-				System.out.println(m.group(2));
 
 				// First find neighboring blocks to the right...
 				if (c instanceof RTChunkBlock) {
