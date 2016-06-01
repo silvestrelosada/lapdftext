@@ -67,7 +67,9 @@ public abstract class RTSpatialContainer implements SpatialContainer {
 
 	@Override
 	public int[] getMargin() {
-		if (margin == null) {
+		
+		if (margin == null && tree.getBounds() != null) {
+
 			margin = new int[4];
 			Rectangle marginRect = tree.getBounds();
 
@@ -158,6 +160,8 @@ public abstract class RTSpatialContainer implements SpatialContainer {
 				new IntegerFrequencyCounter(1);
 		if (list == null)
 			list = this.getAllWordBlocks(SpatialOrdering.MIXED_MODE);
+		if( list.size() == 0 )
+			return 10;
 		int lastX2 = list.get(0).getX2();
 		int space;
 		for (WordBlock block : list) {
@@ -224,8 +228,12 @@ public abstract class RTSpatialContainer implements SpatialContainer {
 				1);
 		if (list == null)
 			list = this.getAllWordBlocks(SpatialOrdering.MIXED_MODE);
+		if( list.size() == 0 )
+			return 3;
+		
 		int lastX2 = list.get(0).getX2();
 		int firstY2 = list.get(0).getY2();
+		
 		int space;
 		for (WordBlock block : list) {
 			space = block.getX1() - lastX2;

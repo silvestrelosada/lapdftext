@@ -9,11 +9,12 @@ import java.util.regex.Pattern;
 
 import edu.isi.bmkeg.lapdf.controller.LapdfEngine;
 import edu.isi.bmkeg.lapdf.model.LapdfDocument;
+import edu.isi.bmkeg.lapdf.pmcXml.PmcXmlArticle;
 import edu.isi.bmkeg.lapdf.xml.model.LapdftextXMLDocument;
 import edu.isi.bmkeg.utils.Converters;
 import edu.isi.bmkeg.utils.xml.XmlBindingTools;
 
-public class GeneratePmcXmlFromPdf {
+public class GenerateNxmlFromPdf {
 
 	private static String USAGE = "usage: <input-dir-or-file> [<output-dir>] [<rule-file>]\n\n"
 			+ "<input-dir-or-file> - the full path to the PDF file or directory to be extracted \n"
@@ -100,14 +101,13 @@ public class GeneratePmcXmlFromPdf {
 				String outXmlPath = Converters.mimicDirectoryStructure(
 						inputFileOrDir, outDir, pdf).getPath();
 				outXmlPath = outXmlPath.replaceAll("\\.pdf", "")
-						+ "_openAccess.xml";
+						+ ".nxml";
 				File outXmlFile = new File(outXmlPath);
 
 				LapdfDocument lapdf = engine.blockifyFile(pdf);
 				engine.classifyDocument(lapdf, ruleFile);
 				
-				LapdftextXMLDocument xmlDoc = lapdf
-						.convertToLapdftextXmlFormat();
+				PmcXmlArticle xmlDoc = lapdf.convertToPmcXmlFormat();
 				XmlBindingTools.saveAsXml(xmlDoc, outXmlFile);
 				
 			}
@@ -117,13 +117,12 @@ public class GeneratePmcXmlFromPdf {
 			String pdfStem = inputFileOrDir.getName();
 			pdfStem = pdfStem.replaceAll("\\.pdf", "");
 
-			String outPath = outDir + "/" + pdfStem + "_openAccess.xml";
+			String outPath = outDir + "/" + pdfStem + ".nxml";
 			File outXmlFile = new File(outPath);
 
 			LapdfDocument lapdf = engine.blockifyFile(inputFileOrDir);
 			engine.classifyDocument(lapdf, ruleFile);
-			LapdftextXMLDocument xmlDoc = lapdf
-					.convertToLapdftextXmlFormat();
+			PmcXmlArticle xmlDoc = lapdf.convertToPmcXmlFormat();
 			XmlBindingTools.saveAsXml(xmlDoc, outXmlFile);
 			
 		}

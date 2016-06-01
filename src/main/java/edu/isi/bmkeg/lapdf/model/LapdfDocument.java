@@ -475,6 +475,7 @@ public class LapdfDocument implements Serializable {
 			// int width = parent.getMargin()[2] - parent.getMargin()[0];
 			// int height = parent.getMargin()[3] - parent.getMargin()[1];
 			int[] m = page.getMargin();
+			
 			LapdftextXMLRectangle r = new LapdftextXMLRectangle(id++, m[2]-m[0], m[3]-m[1], m[0], m[1]);
 			xmlPage.setMargin( r );
 			

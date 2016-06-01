@@ -2,15 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>lapdftext</artifactId>
-	<version>1.7.5-SNAPSHOT</version>
+	<version>1.7.6-SNAPSHOT</version>
 	<name>LA-PDFText</name>
 	<description>A text extraction tool based on the layout of blocks withing PDF files.</description>
 
 	<parent>
 		<groupId>edu.isi.bmkeg</groupId>
 		<artifactId>bmkeg-parent</artifactId>
-		<version>1.1.5-SNAPSHOT</version>
-		<relativePath>../bmkeg-parent</relativePath>
+		<version>1.2.0-SNAPSHOT</version>
 	</parent>
 
 	<build>
