@@ -9,14 +9,15 @@ import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngine;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
+import org.apache.uima.fit.descriptor.ConfigurationParameter;
+import org.apache.uima.fit.factory.AnalysisEngineFactory;
+import org.apache.uima.fit.factory.ConfigurationParameterFactory;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.resource.metadata.TypeSystemDescription;
 import org.jpedal.exception.PdfException;
-import org.uimafit.component.JCasAnnotator_ImplBase;
-import org.uimafit.descriptor.ConfigurationParameter;
-import org.uimafit.factory.AnalysisEngineFactory;
-import org.uimafit.factory.ConfigurationParameterFactory;
+
 
 import edu.isi.bmkeg.lapdf.controller.LapdfEngine;
 import edu.isi.bmkeg.lapdf.controller.LapdfMode;
@@ -30,33 +31,33 @@ public class ParserRuleBasedClassfierAE extends JCasAnnotator_ImplBase {
 
 	private static Logger logger = Logger.getLogger(ParserRuleBasedClassfierAE.class);
 		
-	public static final String MODE = ConfigurationParameterFactory
-			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class, "mode");
+//	public static final String MODE = ConfigurationParameterFactory
+//			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class, "mode");
 	@ConfigurationParameter(mandatory = true, 
 			description = "This is the mode of operation.")
 	private int mode;
 
-	public static final String RULE_FILE = ConfigurationParameterFactory
-			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class, "ruleFile");
+//	public static final String RULE_FILE = ConfigurationParameterFactory
+//			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class, "ruleFile");
 	@ConfigurationParameter(mandatory = false, 
 			description = "This is the rule file used for block classification.")
 	protected String ruleFile;
 
-	public static final String REPORT_BLOCKS = ConfigurationParameterFactory
-			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class, "reportBlocks");
+//	public static final String REPORT_BLOCKS = ConfigurationParameterFactory
+//			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class, "reportBlocks");
 	@ConfigurationParameter(mandatory = true, 
 			description = "This is the flag used to trigger debug reporting.")
 	protected Boolean reportBlocks;
 
-	public static final String EXTRACT_UNCLASSIFIED = ConfigurationParameterFactory
-			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class, "extractUnclassified");
+//	public static final String EXTRACT_UNCLASSIFIED = ConfigurationParameterFactory
+//			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class, "extractUnclassified");
 	@ConfigurationParameter(mandatory = true, 
 			description = "this flag is used to decide whether unclassified flow aware output " + 
 			"text is required.")
 	protected boolean extractUnclassified;
 
-	public static final String OUTPUT_FOLDER = ConfigurationParameterFactory
-			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class, "outputFolder");
+//	public static final String OUTPUT_FOLDER = ConfigurationParameterFactory
+//			.createConfigurationParameterName(ParserRuleBasedClassfierAE.class);
 	@ConfigurationParameter(mandatory = true, 
 			description = "This is the location of the output for debug and results.")
 	private String outputFolder;

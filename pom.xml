@@ -6,11 +6,7 @@
 	<name>LA-PDFText</name>
 	<description>A text extraction tool based on the layout of blocks withing PDF files.</description>
 
-	<parent>
-		<groupId>edu.isi.bmkeg</groupId>
-		<artifactId>bmkeg-parent</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
-	</parent>
+
 
 	<build>
 		<plugins>
@@ -236,18 +232,22 @@
 		<dependency>
 			<groupId>org.apache.uima</groupId>
 			<artifactId>uimaj-adapter-vinci</artifactId>
+			<version>2.8.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.uima</groupId>
 			<artifactId>uimaj-cpe</artifactId>
+			<version>2.8.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.uima</groupId>
 			<artifactId>uimaj-document-annotation</artifactId>
+			<version>2.8.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.uima</groupId>
 			<artifactId>uimaj-tools</artifactId>
+			<version>2.8.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.drools</groupId>
@@ -274,16 +274,23 @@
 			<artifactId>drools-templates</artifactId>
 			<version>5.2.1.Final</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jpedal</groupId>
-			<artifactId>jpedal</artifactId>
-			<version>lgpl-1.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.jsi</groupId>
-			<artifactId>jsi</artifactId>
-			<version>1.0.0</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.jpedal</groupId> -->
+<!-- 			<artifactId>jpedal</artifactId> -->
+<!-- 			<version>lgpl-1.0.1</version> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>net.sourceforge.jsi</groupId> -->
+<!-- 			<artifactId>jsi</artifactId> -->
+<!-- 			<version>1.0.0</version> -->
+<!-- 		</dependency> -->
+<!-- https://mvnrepository.com/artifact/org.jpedal/OpenViewerFX -->
+<dependency>
+    <groupId>org.jpedal</groupId>
+    <artifactId>OpenViewerFX</artifactId>
+    <version>7.1.27</version>
+</dependency>
+
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
@@ -295,12 +302,9 @@
 			<version>2.9.1</version>
 		</dependency>
 		<dependency>
-			<groupId>org.uimafit</groupId>
-			<artifactId>uimafit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi.bmkeg</groupId>
-			<artifactId>bmkeg-utils</artifactId>
+			<groupId>org.apache.uima</groupId>
+			<artifactId>uimafit-core</artifactId>
+			<version>2.1.0</version>			
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -328,4 +332,5 @@
 			<version>2.0.16</version>
 		</dependency>
 	</dependencies>
+	<groupId>edu.isi.bmkeg</groupId>
 </project>
